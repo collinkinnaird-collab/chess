@@ -80,7 +80,7 @@ public class ChessPiece {
         }
 
         return calculateMove.pieceMoves(board, myPosition);
-//
+
 //            if( piece.getPieceType() == PieceType.BISHOP) {
 //
 //

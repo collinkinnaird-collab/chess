@@ -1,13 +1,24 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
 
+    @Override
+    public Collection<ChessMove> pieceMoves (ChessBoard board, ChessPosition myPosition ) {
 
-    //for(int i = 0; i > 20; i++){
+        Collection<ChessMove> bishopMoves = new ArrayList<>();
+        int[][] possibleMoves = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
-   // }
+        bishopMoves = loop(board, myPosition, possibleMoves);
+
+        return bishopMoves;
+
+    }
+
+
 
 
 }

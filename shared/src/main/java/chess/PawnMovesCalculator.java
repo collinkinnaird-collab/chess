@@ -8,9 +8,11 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition ){
-        List<ChessMove> pawnMoves = new ArrayList<>();
+        Collection<ChessMove> pawnMoves = new ArrayList<>();
 
+        int [][] possibleMoves = {{1,0},{-1,0}, {1,1}, {-1,1}, {1,-1}, {-1,-1}, {2,0}, {-2,0}};
 
+        pawnMoves = pawnOptions(board, myPosition, possibleMoves);
 
         return pawnMoves;
     }

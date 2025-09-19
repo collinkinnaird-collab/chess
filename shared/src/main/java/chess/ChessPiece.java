@@ -81,45 +81,6 @@ public class ChessPiece {
 
         return calculateMove.pieceMoves(board, myPosition);
 
-//            if( piece.getPieceType() == PieceType.BISHOP) {
-//
-//
-//                List<ChessMove> bishopMoves = new ArrayList<>();
-//
-//                int[][] possibleMoves = {{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
-//
-//                int set = 0;
-//
-//                for (int i = 0; i < possibleMoves.length; i++) {
-//                    int[] directions = possibleMoves[i];
-//
-//                    int updateXaxis = myPosition.getRow() + directions[0];
-//                    int updateYaxis = myPosition.getColumn() + directions[1];
-//
-//                    while (updateYaxis <= 8 && updateYaxis >= 1 && updateXaxis <= 8 && updateXaxis >= 1) {
-//                        ChessPiece otherPiece = board.getPiece(new ChessPosition(updateXaxis, updateYaxis));
-//                        if(otherPiece != null) {
-//                            if (otherPiece.pieceColor == piece.pieceColor) {
-//                                break;
-//                            }
-//                            else {
-//                                bishopMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(updateXaxis, updateYaxis), null));
-//                                break;
-//                            }
-//                        }
-//                        else {
-//                            bishopMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(updateXaxis, updateYaxis), null));
-//
-//                            set++;
-//                            updateXaxis = updateXaxis + directions[0];
-//                            updateYaxis = updateYaxis + directions[1];
-//                        }
-//                    }
-//                }
-//
-//                return bishopMoves;
-//            }
-//                  return List.of(new ChessMove(new ChessPosition(5,4), null, null));
     }
 
     @Override

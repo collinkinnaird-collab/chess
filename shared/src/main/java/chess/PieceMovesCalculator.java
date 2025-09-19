@@ -58,23 +58,27 @@ interface PieceMovesCalculator {
         ChessPiece myPiece = board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()));
 
 
-//        for (int[] path : direction) {
-//            ChessPosition test = new ChessPosition(myPosition.getRow() + path[0], myPosition.getColumn() + path[1]);
-//            ChessPiece otherPiece = board.getPiece(new ChessPosition(myPosition.getRow() + path[0], myPosition.getColumn() + path[1]));
-//
-//
-//            if (onBoard(test) && otherPiece != null) {
-//                if (otherPiece.pieceColor == myPiece.pieceColor) {
-//                    break;
-//                } else {
-//                    eightPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(myPosition.getRow() + path[0], myPosition.getColumn() + path[1]), null));
-//
-//                }
-//
-//            }
-//        }
+        for (int[] path : direction) {
 
+            int updateXaxis = myPosition.getRow() + path[0];
+            int updateYaxis = myPosition.getColumn() + path[1];
 
+            if (updateXaxis <= 8 && updateXaxis >= 1 && updateYaxis <= 8 && updateYaxis >= 1) {
+
+                ChessPiece anotherPiece = board.getPiece(new ChessPosition(updateXaxis, updateYaxis));
+                if (anotherPiece != null) {
+                    if (anotherPiece.pieceColor != myPiece.pieceColor)
+                    {
+                        eightPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(updateXaxis, updateYaxis), null));
+                    }
+                }
+                else
+                {
+                    eightPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(updateXaxis, updateYaxis), null));
+                }
+            }
+
+        }
         return eightPieceMoves;
     }
 

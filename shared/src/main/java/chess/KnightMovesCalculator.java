@@ -6,10 +6,13 @@ import java.util.List;
 
 public class KnightMovesCalculator implements PieceMovesCalculator {
 
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition ){
-        List<ChessMove> knightMoves = new ArrayList<>();
+        Collection<ChessMove> knightMoves = new ArrayList<>();
 
+        int[][] possibleMoves = {{2, 1}, {2, -1}, {-2, -1}, {-2, 1} ,{1, 2} ,{1, -2}, {-1, 2}, {-1, -2}};
 
+        knightMoves = eightOptions(board, myPosition, possibleMoves);
 
         return knightMoves;
     }

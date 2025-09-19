@@ -67,7 +67,7 @@ public class ChessBoard {
         ChessPiece Bknight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
         ChessPiece BBishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
         ChessPiece BQueen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        ChessPiece bKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        ChessPiece BKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         ChessPiece BBishop2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
         ChessPiece BKnight2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
         ChessPiece Brook2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
@@ -81,10 +81,41 @@ public class ChessBoard {
         ChessPiece BPawn7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         ChessPiece BPawn8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
 
-        ChessPosition theOneForAll = new ChessPosition(1,1);
+        addPiece(new ChessPosition(1,1), rook);
+        addPiece(new ChessPosition(1,2), knight);
+        addPiece(new ChessPosition(1,3), Bishop);
+        addPiece(new ChessPosition(1,4), Queen);
+        addPiece(new ChessPosition(1,5), King);
+        addPiece(new ChessPosition(1,6), Bishop2);
+        addPiece(new ChessPosition(1,7), Knight2);
+        addPiece(new ChessPosition(1,8), rook2);
 
-        addPiece(, rook.getPieceType());
+        addPiece(new ChessPosition(2,1), Pawn);
+        addPiece(new ChessPosition(2,2), Pawn2);
+        addPiece(new ChessPosition(2,3), Pawn3);
+        addPiece(new ChessPosition(2,4), Pawn4);
+        addPiece(new ChessPosition(2,5), Pawn5);
+        addPiece(new ChessPosition(2,6), Pawn6);
+        addPiece(new ChessPosition(2,7), Pawn7);
+        addPiece(new ChessPosition(2,8), Pawn8);
 
+        addPiece(new ChessPosition(8,1), Brook);
+        addPiece(new ChessPosition(8,2), Bknight);
+        addPiece(new ChessPosition(8,3), BBishop);
+        addPiece(new ChessPosition(8,4), BQueen);
+        addPiece(new ChessPosition(8,5), BKing);
+        addPiece(new ChessPosition(8,6), BBishop2);
+        addPiece(new ChessPosition(8,7), BKnight2);
+        addPiece(new ChessPosition(8,8), Brook2);
+
+        addPiece(new ChessPosition(7,1), BPawn);
+        addPiece(new ChessPosition(7,2), BPawn2);
+        addPiece(new ChessPosition(7,3), BPawn3);
+        addPiece(new ChessPosition(7,4), BPawn4);
+        addPiece(new ChessPosition(7,5), BPawn5);
+        addPiece(new ChessPosition(7,6), BPawn6);
+        addPiece(new ChessPosition(7,7), BPawn7);
+        addPiece(new ChessPosition(7,8), BPawn8);
     }
 
     @Override

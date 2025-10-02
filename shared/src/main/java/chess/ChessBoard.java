@@ -20,8 +20,8 @@ public class ChessBoard  {
     public ChessBoard(ChessBoard copy){
 
         ChessPiece[][] copyBoard = copy.squares;
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
                 if (squares[i][j].getPieceType() != null){
                     ChessPiece copyPiece = new ChessPiece(squares[i][j].pieceColor, squares[i][j].getPieceType());
                     copyBoard[i][j] = copyPiece;

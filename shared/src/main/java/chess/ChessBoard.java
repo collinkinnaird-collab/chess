@@ -9,12 +9,31 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard  {
 
     ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
         
+    }
+
+    public ChessBoard(ChessBoard copy){
+
+        ChessPiece[][] copyBoard = copy.squares;
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if (squares[i][j].getPieceType() != null){
+                    ChessPiece copyPiece = new ChessPiece(squares[i][j].pieceColor, squares[i][j].getPieceType());
+                    copyBoard[i][j] = copyPiece;
+
+                }
+            }
+        }
+        // nested for loop,
+
+        this.squares = copyBoard;
+
+
     }
 
     /**

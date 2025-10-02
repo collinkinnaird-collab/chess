@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,15 +8,30 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame implements Cloneable{
+public class ChessGame implements CheckMateCalculator{
 
-    ChessGame myGame = new ChessGame();
+   // ChessGame myGame = new ChessGame();
     ChessBoard gameBoard = new ChessBoard();
     TeamColor myColor = TeamColor.WHITE;
-
     public ChessGame() {
 
+
     }
+
+    public ChessGame(ChessGame copy){
+
+        ChessBoard copyBoard = new ChessBoard(copy.gameBoard);
+
+
+        this.myColor = copy.myColor;
+        this.gameBoard = copyBoard;
+
+
+
+    }
+
+
+
 
     /**
      * @return Which team's turn it is
@@ -76,18 +88,21 @@ public class ChessGame implements Cloneable{
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-        Collection<ChessMove> totalMoves = new ArrayList<>();
-        totalMoves = validMoves(move.getStartPosition());
+//        Collection<ChessMove> totalMoves = new ArrayList<>();
+//        totalMoves = validMoves(move.getStartPosition());
+
+        //ChessGame copy = new ChessGame(this);
+
 
         ChessPiece trialPiece = gameBoard.getPiece(move.getStartPosition());
         if (isInCheck(trialPiece.pieceColor)) {
-
+            throw new InvalidMoveException();
         }
         if (isInCheckmate(trialPiece.pieceColor)){
-
+            throw new InvalidMoveException();
         }
         if (isInStalemate(trialPiece.pieceColor)){
-
+            throw new InvalidMoveException();
         } else {
             gameBoard.addPiece(move.getEndPosition(), trialPiece);
             gameBoard.addPiece(move.getStartPosition(), null);
@@ -103,11 +118,44 @@ public class ChessGame implements Cloneable{
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        for(int i = 0; i < 8; i++)
-        {
 
+        //find king
+        ChessPiece kingPiece;
+        ChessPosition kingPosition = new ChessPosition(0,0);
+        Collection<ChessMove> kingMoves = new ArrayList<>();
+        Collection<ChessMove> otherMoves = new ArrayList<>();
+
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                kingPiece = gameBoard.getPiece(new ChessPosition(i,j));
+                if (kingPiece.getPieceType() == ChessPiece.PieceType.KING)
+                {
+                    kingPosition = new ChessPosition(i,j);
+                    kingMoves = validMoves(kingPosition);
+                    break;
+                }
+
+            }
         }
+        for(int k = 0; k < 8; k++){
+            for(int l = 0; l < 8; l++){
+                if (gameBoard.getPiece(new ChessPosition(k,l)).getPieceType() != null)
+                {
+                    ChessPiece testPiece = gameBoard.getPiece(new ChessPosition(k,l));
+                    if(testPiece.pieceColor != teamColor){
+                        otherMoves = testPiece.pieceMoves(gameBoard, new ChessPosition(k,l));
+                        Iterator<ChessMove> iterator = otherMoves.iterator();
+                        while(iterator.hasNext())
+                        {
+                            if(iterator.next().getEndPosition() == kingPosition){
+                                return true;
+                            }
+                        }
+                    }
+                }
 
+            }
+        }
 
         return false;
     }
@@ -119,8 +167,46 @@ public class ChessGame implements Cloneable{
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+
+//        //find king
+//        ChessPiece kingPiece;
+//        ChessPosition kingPosition = new ChessPosition(0,0);
+//        Collection<ChessMove> kingMoves = new ArrayList<>();
+//        Collection<ChessMove> otherMoves = new ArrayList<>();
+//
+//        for(int i = 0; i < 8; i++){
+//            for(int j = 0; j < 8; j++){
+//                kingPiece = gameBoard.getPiece(new ChessPosition(i,j));
+//                if (kingPiece.getPieceType() == ChessPiece.PieceType.KING)
+//                {
+//                    kingPosition = new ChessPosition(i,j);
+//                    kingMoves = validMoves(kingPosition);
+//                    break;
+//                }
+//
+//            }
+//        }
+//        for(int k = 0; k < 8; k++){
+//            for(int l = 0; l < 8; l++){
+//                if (gameBoard.getPiece(new ChessPosition(k,l)).getPieceType() != null)
+//                {
+//                    ChessPiece testPiece = gameBoard.getPiece(new ChessPosition(k,l));
+//                    if(testPiece.pieceColor != teamColor){
+//                        otherMoves = testPiece.pieceMoves(gameBoard, new ChessPosition(k,l));
+//                        Iterator<ChessMove> iterator = otherMoves.iterator();
+//                        while(iterator.hasNext())
+//                        {
+//                            if(iterator.next().getEndPosition() == kingPosition){
+//                                return true;
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }
+//
         return false;
-        // valid moves here
     }
 
     /**
@@ -153,19 +239,19 @@ public class ChessGame implements Cloneable{
         return gameBoard;
     }
 
-    @Override
-    public ChessGame clone(){
-        try{
-            ChessGame clonedGame = (ChessGame) super.clone();
-
-          //  ChessBoard copyBoard = (ChessBoard) getBoard().clone();
-           // clone().setBoard(copyBoard);
-
-            return clonedGame;
-        } catch (CloneNotSupportedException e){
-            throw new RuntimeException();
-        }
-    }
+//    @Override
+//    public ChessGame clone(){
+//        try{
+//            ChessGame clonedGame = (ChessGame) super.clone();
+//
+//            ChessBoard copyBoard = (ChessBoard) getBoard().clone();
+//            clonedGame.setBoard(copyBoard);
+//
+//            return clonedGame;
+//        } catch (CloneNotSupportedException e){
+//            throw new RuntimeException();
+//        }
+//    }
 
 
     @Override
@@ -189,3 +275,6 @@ public class ChessGame implements Cloneable{
 
 
 }
+
+
+//

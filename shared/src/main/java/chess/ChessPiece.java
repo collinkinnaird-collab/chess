@@ -22,6 +22,12 @@ public class ChessPiece {
         this.type = type;
     }
 
+    public ChessPiece(ChessPiece clone){
+        this.pieceColor = clone.pieceColor;
+        this.type = clone.type;
+
+    }
+
 
     /**
      * The various different chess piece options

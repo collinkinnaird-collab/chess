@@ -97,7 +97,7 @@ public class ChessGame implements CheckMateCalculator{
 
 
         // ChessGame copy = new ChessGame(this);
-        if (gameBoard.getPiece(move.getStartPosition()) == null){
+        if (gameBoard.getPiece(move.getStartPosition()) == null || gameBoard.getPiece(move.getStartPosition()).pieceColor != teamTurn){
             throw new InvalidMoveException();
         }
 
@@ -123,6 +123,13 @@ public class ChessGame implements CheckMateCalculator{
                     throw new InvalidMoveException();
                 } else if (isLegit) {
                     gameBoard.addPiece(move.getEndPosition(), trialPiece);
+                    if(trialPiece.getPieceType() == ChessPiece.PieceType.PAWN && (move.getEndPosition().getRow() == 1 ||move.getEndPosition().getRow() == 8))
+                    {
+                        gameBoard.addPiece(move.getEndPosition(), new ChessPiece(teamTurn, move.getPromotionPiece()));
+                    }
+                    else{
+                        gameBoard.addPiece(move.getEndPosition(), trialPiece);
+                    }
                     gameBoard.addPiece(move.getStartPosition(), null);
                     setBoard(gameBoard);
                     if(teamTurn == TeamColor.WHITE) {

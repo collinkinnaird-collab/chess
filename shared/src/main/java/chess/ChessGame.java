@@ -1,6 +1,9 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -8,7 +11,11 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame {
+public class ChessGame implements Cloneable{
+
+    ChessGame myGame = new ChessGame();
+    ChessBoard gameBoard = new ChessBoard();
+    TeamColor myColor = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -18,7 +25,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return myColor;
     }
 
     /**
@@ -27,7 +34,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        myColor = team;
     }
 
     /**
@@ -46,7 +53,19 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+
+
+        List<ChessMove> allMoves = new ArrayList<>();
+
+        ChessPiece currentPiece = gameBoard.getPiece(startPosition);
+        if (currentPiece.getPieceType() == null)
+        {
+            return allMoves;
+        }
+
+
+        return currentPiece.pieceMoves(gameBoard, startPosition);
+
     }
 
     /**
@@ -56,7 +75,25 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+
+        Collection<ChessMove> totalMoves = new ArrayList<>();
+        totalMoves = validMoves(move.getStartPosition());
+
+        ChessPiece trialPiece = gameBoard.getPiece(move.getStartPosition());
+        if (isInCheck(trialPiece.pieceColor)) {
+
+        }
+        if (isInCheckmate(trialPiece.pieceColor)){
+
+        }
+        if (isInStalemate(trialPiece.pieceColor)){
+
+        } else {
+            gameBoard.addPiece(move.getEndPosition(), trialPiece);
+            gameBoard.addPiece(move.getStartPosition(), null);
+            setBoard(gameBoard);
+        }
+
     }
 
     /**
@@ -66,7 +103,13 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for(int i = 0; i < 8; i++)
+        {
+
+        }
+
+
+        return false;
     }
 
     /**
@@ -76,7 +119,8 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return false;
+        // valid moves here
     }
 
     /**
@@ -87,7 +131,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return false;
+        // call valid moves here
     }
 
     /**
@@ -96,7 +141,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        gameBoard = board;
     }
 
     /**
@@ -105,6 +150,42 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return gameBoard;
     }
+
+    @Override
+    public ChessGame clone(){
+        try{
+            ChessGame clonedGame = (ChessGame) super.clone();
+
+          //  ChessBoard copyBoard = (ChessBoard) getBoard().clone();
+           // clone().setBoard(copyBoard);
+
+            return clonedGame;
+        } catch (CloneNotSupportedException e){
+            throw new RuntimeException();
+        }
+    }
+
+
+    @Override
+    public String toString() {
+        return "ChessGame{}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(gameBoard, chessGame.gameBoard) && myColor == chessGame.myColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameBoard, myColor);
+    }
+
+
 }

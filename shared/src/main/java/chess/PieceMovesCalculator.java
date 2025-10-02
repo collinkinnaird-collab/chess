@@ -25,7 +25,7 @@ interface PieceMovesCalculator {
 
                 ChessPiece otherPiece = board.getPiece(new ChessPosition(updateXaxis, updateYaxis));
                 if(otherPiece != null) {
-                    if (otherPiece.pieceColor == myPiece.pieceColor) {
+                    if (otherPiece.getTeamColor() == myPiece.getTeamColor()) {
                         break;
                     } else {
                         contPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()), new ChessPosition(updateXaxis, updateYaxis), null));

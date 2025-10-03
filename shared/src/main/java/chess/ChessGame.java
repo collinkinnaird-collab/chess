@@ -84,7 +84,7 @@ public class ChessGame implements CheckMateCalculator{
             ChessPiece temporaryBadPiece = gameBoard.getPiece(nextMove.getEndPosition());
             gameBoard.addPiece(startPosition, null);
             gameBoard.addPiece(nextMove.getEndPosition(), currentPiece);
-            if (!isInCheck(teamTurn)) {
+            if (!isInCheck(currentPiece.pieceColor)) {
                 goodMoves.add(nextMove);
             }
             gameBoard.addPiece(nextMove.getEndPosition(), temporaryBadPiece);
@@ -213,45 +213,13 @@ public class ChessGame implements CheckMateCalculator{
      */
     public boolean isInCheckmate(TeamColor teamColor) {
 
-//        //find king
-//        ChessPiece kingPiece;
-//        ChessPosition kingPosition = new ChessPosition(0,0);
-//        Collection<ChessMove> kingMoves = new ArrayList<>();
-//        Collection<ChessMove> otherMoves = new ArrayList<>();
-//
-//        for(int i = 0; i < 8; i++){
-//            for(int j = 0; j < 8; j++){
-//                kingPiece = gameBoard.getPiece(new ChessPosition(i,j));
-//                if (kingPiece.getPieceType() == ChessPiece.PieceType.KING)
-//                {
-//                    kingPosition = new ChessPosition(i,j);
-//                    kingMoves = validMoves(kingPosition);
-//                    break;
-//                }
-//
-//            }
-//        }
-//        for(int k = 0; k < 8; k++){
-//            for(int l = 0; l < 8; l++){
-//                if (gameBoard.getPiece(new ChessPosition(k,l)).getPieceType() != null)
-//                {
-//                    ChessPiece testPiece = gameBoard.getPiece(new ChessPosition(k,l));
-//                    if(testPiece.pieceColor != teamColor){
-//                        otherMoves = testPiece.pieceMoves(gameBoard, new ChessPosition(k,l));
-//                        Iterator<ChessMove> iterator = otherMoves.iterator();
-//                        while(iterator.hasNext())
-//                        {
-//                            if(iterator.next().getEndPosition() == kingPosition){
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//
-        return false;
+        if(isInCheck(teamColor) && isInStalemate(teamColor))
+        {
+            return true;
+        } else {
+
+            return false;
+        }
     }
 
     /**
@@ -262,8 +230,29 @@ public class ChessGame implements CheckMateCalculator{
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
-        // call valid moves here
+
+        //find king
+        ChessPiece kingPiece;
+        ChessPosition kingPosition = new ChessPosition(0,0);
+
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    if (gameBoard.getPiece(new ChessPosition(i, j)) != null) {
+                        kingPiece = gameBoard.getPiece(new ChessPosition(i, j));
+                        if (kingPiece.getPieceType() == ChessPiece.PieceType.KING && kingPiece.pieceColor == teamColor) {
+                            kingPosition = new ChessPosition(i, j);
+                            break;
+                        }
+                    }
+                }
+            }
+        if(validMoves(kingPosition).isEmpty())
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**

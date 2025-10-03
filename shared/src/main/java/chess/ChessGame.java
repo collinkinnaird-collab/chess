@@ -11,12 +11,15 @@ import java.util.*;
 public class ChessGame implements CheckMateCalculator{
 
    // ChessGame myGame = new ChessGame();
-    ChessBoard gameBoard = new ChessBoard();
-    TeamColor teamTurn = TeamColor.WHITE;
+    ChessBoard gameBoard;
+    TeamColor teamTurn;
     boolean stalemate = false;
 
     public ChessGame() {
 
+            gameBoard = new ChessBoard();
+            gameBoard.resetBoard();
+            teamTurn = TeamColor.WHITE;
 
     }
 
@@ -127,7 +130,8 @@ public class ChessGame implements CheckMateCalculator{
                     throw new InvalidMoveException();
                 }
                 if (isInCheckmate(trialPiece.pieceColor)) {
-                    gameBoard.resetBoard();
+
+                    getBoard();
                 }
                 if (isInStalemate(trialPiece.pieceColor))
                 {
@@ -306,13 +310,9 @@ public class ChessGame implements CheckMateCalculator{
     public ChessBoard getBoard() {
         if(gameBoard == null)
         {
-            startGame();
+            gameBoard.resetBoard();
         }
         return gameBoard;
-    }
-
-    public void startGame() {
-        gameBoard.resetBoard();
     }
 
     @Override

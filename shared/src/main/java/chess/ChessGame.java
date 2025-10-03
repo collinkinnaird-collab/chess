@@ -72,7 +72,10 @@ public class ChessGame implements CheckMateCalculator{
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
 
+        // get all the possible moves
         Collection<ChessMove> allMoves = new ArrayList<>();
+
+        // from the possible moves, just get the valid ones
         Collection<ChessMove> goodMoves = new ArrayList<>();
         ChessPiece currentPiece = gameBoard.getPiece(startPosition);
         if (currentPiece.getPieceType() == null)
@@ -82,6 +85,7 @@ public class ChessGame implements CheckMateCalculator{
 
         allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
 
+        // make a loop to check every possible move and consqeunce
         for(ChessMove nextMove: allMoves) {
 
             ChessPiece temporaryBadPiece = gameBoard.getPiece(nextMove.getEndPosition());
@@ -109,11 +113,10 @@ public class ChessGame implements CheckMateCalculator{
 
           Collection<ChessMove> totalMoves = new ArrayList<>();
 
-
-        // ChessGame copy = new ChessGame(this);
         if (gameBoard.getPiece(move.getStartPosition()) == null || gameBoard.getPiece(move.getStartPosition()).pieceColor != teamTurn){
             throw new InvalidMoveException();
         }
+            // find out if the end position is acutally a move you can do
             ChessPiece trialPiece = gameBoard.getPiece(move.getStartPosition());
             totalMoves = trialPiece.pieceMoves(gameBoard, move.getStartPosition());
             Iterator<ChessMove> iterator = totalMoves.iterator();
@@ -126,6 +129,7 @@ public class ChessGame implements CheckMateCalculator{
                 }
             }
 
+            // find out the status of the board
                 if (isInCheck(trialPiece.pieceColor)) {
                     throw new InvalidMoveException();
                 }
@@ -141,6 +145,8 @@ public class ChessGame implements CheckMateCalculator{
                         teamTurn = TeamColor.WHITE;
                     }
                     throw new InvalidMoveException();
+
+                    // update the board if the move is legit
                 } else if (isLegit) {
                     gameBoard.addPiece(move.getEndPosition(), trialPiece);
                     if(trialPiece.getPieceType() == ChessPiece.PieceType.PAWN && (move.getEndPosition().getRow() == 1 ||move.getEndPosition().getRow() == 8))
@@ -171,14 +177,17 @@ public class ChessGame implements CheckMateCalculator{
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+
+    // check if person is in check
     public boolean isInCheck(TeamColor teamColor) {
 
-        //find king
+
         ChessPiece kingPiece;
         ChessPosition enemyPosition;
         ChessPosition kingPosition = new ChessPosition(0,0);
         Collection<ChessMove> otherMoves = new ArrayList<>();
 
+        // look for the King
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 if(gameBoard.getPiece(new ChessPosition(i,j))!= null) {
@@ -191,6 +200,8 @@ public class ChessGame implements CheckMateCalculator{
                 }
             }
         }
+
+        // iterate through every enemy piece
         for(int k = 1; k <= 8; k++){
             for(int l = 1; l <= 8; l++){
                 if (gameBoard.getPiece(new ChessPosition(k,l)) != null)
@@ -225,8 +236,11 @@ public class ChessGame implements CheckMateCalculator{
 
         boolean forSure = true;
 
+        // its basically chekcmakte is these are true
         if(isInCheck(teamColor) && (isInStalemate(teamColor) || stalemate))
         {
+
+            // but see if a piece can kill another piece causing check
             for(int k = 1; k <= 8; k++){
                 for(int l = 1; l <= 8; l++){
                     if (gameBoard.getPiece(new ChessPosition(k,l)) != null)
@@ -264,7 +278,7 @@ public class ChessGame implements CheckMateCalculator{
      */
     public boolean isInStalemate(TeamColor teamColor) {
 
-        //find king
+        // repeat code, TODO: put this in interface
         ChessPiece kingPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         ChessPosition kingPosition = new ChessPosition(0,0);
 

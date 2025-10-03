@@ -69,17 +69,28 @@ public class ChessGame implements CheckMateCalculator{
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
 
-        List<ChessMove> allMoves = new ArrayList<>();
-
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        Collection<ChessMove> goodMoves = new ArrayList<>();
         ChessPiece currentPiece = gameBoard.getPiece(startPosition);
         if (currentPiece.getPieceType() == null)
         {
             return allMoves;
         }
 
+        allMoves = currentPiece.pieceMoves(gameBoard, startPosition);
 
-        return currentPiece.pieceMoves(gameBoard, startPosition);
+        for(ChessMove nextMove: allMoves) {
 
+            ChessPiece temporaryBadPiece = gameBoard.getPiece(nextMove.getEndPosition());
+            gameBoard.addPiece(startPosition, null);
+            gameBoard.addPiece(nextMove.getEndPosition(), currentPiece);
+            if (!isInCheck(teamTurn)) {
+                goodMoves.add(nextMove);
+            }
+            gameBoard.addPiece(nextMove.getEndPosition(), temporaryBadPiece);
+            gameBoard.addPiece(startPosition, currentPiece);
+        }
+        return goodMoves;
     }
 
     /**
@@ -100,9 +111,8 @@ public class ChessGame implements CheckMateCalculator{
         if (gameBoard.getPiece(move.getStartPosition()) == null || gameBoard.getPiece(move.getStartPosition()).pieceColor != teamTurn){
             throw new InvalidMoveException();
         }
-
             ChessPiece trialPiece = gameBoard.getPiece(move.getStartPosition());
-            totalMoves = trialPiece.pieceMoves(getBoard(), move.getStartPosition());
+            totalMoves = trialPiece.pieceMoves(gameBoard, move.getStartPosition());
             Iterator<ChessMove> iterator = totalMoves.iterator();
 
             while(iterator.hasNext()){
@@ -157,7 +167,6 @@ public class ChessGame implements CheckMateCalculator{
         ChessPiece kingPiece;
         ChessPosition enemyPosition;
         ChessPosition kingPosition = new ChessPosition(0,0);
-        Collection<ChessMove> kingMoves = new ArrayList<>();
         Collection<ChessMove> otherMoves = new ArrayList<>();
 
         for(int i = 1; i <= 8; i++){
@@ -166,7 +175,6 @@ public class ChessGame implements CheckMateCalculator{
                     kingPiece = gameBoard.getPiece(new ChessPosition(i, j));
                     if (kingPiece.getPieceType() == ChessPiece.PieceType.KING && kingPiece.pieceColor == teamColor) {
                         kingPosition = new ChessPosition(i, j);
-                        kingMoves = validMoves(kingPosition);
                         break;
                     }
 

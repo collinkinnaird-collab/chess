@@ -4,7 +4,7 @@ import com.google.gson.*;
 
 public record UserData(String username, String password, String email) {
 
-    public UserData setParameters(String newUsername, String newPassword, String newEmail) {
+    public UserData registerNewUser(String newUsername, String newPassword, String newEmail) {
         return new UserData (newUsername, newPassword, newEmail);
     }
 

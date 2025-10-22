@@ -1,32 +1,52 @@
 package service;
 
 import Service.UserService;
-import dataaccess.DataAccessException;
-import chess.ChessGame;
-import dataaccess.MemoryDataAccess;
+import Service.ClearService;
+import dataaccess.*;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
-import passoff.server.TestServerFacade;
 import server.Server;
 
-import java.net.HttpURLConnection;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Locale;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 
 public class UserServiceTest {
 
-    static final UserService service = new UserService(new MemoryDataAccess());
+    UserDAO mydao;
+
+    static final UserService service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+    static final ClearService clear = new ClearService(new MemoryUserDAO(), new MemoryGameDAO()
+                                                     , new MemoryAuthDAO());
+
+//     static private Server chessServer;
+
+//    @BeforeAll
+//    static void startServer() {
+//        var service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+//        chessServer = new Server(service);
+//        chessServer.run(8080);
+//        var url = "http://localhost:" + chessServer.port();
+//
+//    }
+
+    @BeforeEach
+    void clear() throws DataAccessException{
+        clear.clearAll();
+    }
 
     @Test
     void register() throws DataAccessException{
 
         var user = new UserData("John", "flip88", "John.Doe@gmail.com");
-        user = service.register(user);
+
+        UserData test = mydao.register(user);
+
+        assertUserEqual(user, test);
+
 
 
 
@@ -41,6 +61,11 @@ public class UserServiceTest {
 
     }
 
+    void assertUserEqual (UserData expected, UserData actual){
+        assertEquals(expected.email(), actual.email());
+        assertEquals(expected.password(), actual.password());
+        assertEquals(expected.username(), actual.username());
+    }
 
 
 

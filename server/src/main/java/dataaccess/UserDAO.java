@@ -9,4 +9,6 @@ public interface UserDAO {
 
     UserData getUser(UserData existingUser) throws  DataAccessException;
 
+    void clear() throws DataAccessException;
+
 }

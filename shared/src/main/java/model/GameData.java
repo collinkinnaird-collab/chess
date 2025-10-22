@@ -1,4 +1,4 @@
 package model;
 
-public class GameData {
+public record GameData() {
 }

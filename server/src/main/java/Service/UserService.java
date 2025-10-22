@@ -1,7 +1,9 @@
 package Service;
+import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import dataaccess.DataAccessException;
 import model.*;
+import java.util.UUID;
 
 //import dataaccess.DataAccess;
 //import exception.ResponseException;
@@ -9,21 +11,36 @@ import model.*;
 
 public class UserService {
 
-    private final UserDAO dataAccessAuth;
+    private final UserDAO dataAccessUser;
+    private final AuthDAO dataAccessAuth;
 
-    public UserService(UserDAO dataAccessAuth) {
+    public UserService(UserDAO dataAccessUser, AuthDAO dataAccessAuth) {
+        this.dataAccessUser = dataAccessUser;
         this.dataAccessAuth = dataAccessAuth;
     }
 
-    public UserData register(UserData registerRequest) throws DataAccessException{
+    public AuthData register(UserData registerRequest) throws DataAccessException{
 
-        if(dataAccessAuth.getUser(registerRequest).username() != null)
+        String authToken = UUID.randomUUID().toString();
+        AuthData userAuth = new AuthData(registerRequest.username(), authToken);
+
+        dataAccessUser.register(registerRequest);
+
+        dataAccessAuth.newAuth(userAuth);
+
+
+
+        return userAuth;
+
+    }
+
+    public UserData logIn(UserData loginRequest) throws DataAccessException{
+
+        if(dataAccessUser.getUser(loginRequest) != null)
         {
-            throw new DataAccessException("userName already exists");
+            throw new DataAccessException("no user found");
         }
-
-        return dataAccessAuth.register(registerRequest);
-
+        return dataAccessUser.getUser(loginRequest);
     }
 
 }

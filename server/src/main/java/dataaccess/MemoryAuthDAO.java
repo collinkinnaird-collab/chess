@@ -19,7 +19,7 @@ public class MemoryAuthDAO implements AuthDAO{
     public AuthData getAuth(String user) throws DataAccessException{
 
         for (AuthData authToken : verifiedAuth){
-            if(authToken.authToken().equals(user)){
+            if(authToken.username().equals(user)){
                 return authToken;
             }
         }
@@ -30,6 +30,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
     @Override
     public void newAuth(AuthData auth) throws DataAccessException {
+
         verifiedAuth.add(auth);
     }
 
@@ -44,5 +45,16 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public void clearTotal() throws DataAccessException {
         verifiedAuth.clear();
+    }
+
+    @Override
+    public AuthData getName(String auth) throws DataAccessException {
+        for (AuthData authToken : verifiedAuth){
+            if(authToken.authToken().equals(auth)){
+                return authToken;
+            }
+        }
+
+        throw new DataAccessException("No authToken");
     }
 }

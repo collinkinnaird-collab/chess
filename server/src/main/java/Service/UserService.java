@@ -1,8 +1,5 @@
 package Service;
-import dataaccess.AlreadyTakenException;
-import dataaccess.AuthDAO;
-import dataaccess.UserDAO;
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import model.*;
 import java.util.UUID;
 
@@ -35,20 +32,36 @@ public class UserService {
 
     public AuthData logIn(UserData loginRequest) throws DataAccessException{
 
-        String authToken = UUID.randomUUID().toString();
-        AuthData loginUserAuth = new AuthData(loginRequest.username(), authToken);
+        try{
+            AuthData test = dataAccessAuth.getAuth(loginRequest.username());
+            if(test.authToken() != null)
+            {
+                return new AuthData(null, null);
+            }
 
-        dataAccessUser.getUser(loginRequest);
+        }catch (DataAccessException e) {
 
-        dataAccessAuth.newAuth(loginUserAuth);
 
-        return loginUserAuth;
+            String authToken = UUID.randomUUID().toString();
+            AuthData loginUserAuth = new AuthData(loginRequest.username(), authToken);
+
+            dataAccessUser.getUser(loginRequest);
+
+            dataAccessAuth.newAuth(loginUserAuth);
+
+            return loginUserAuth;
+        }
+
+        return null;
 
     }
 
     public void logout(String logoutRequest) throws DataAccessException{
 
-        AuthData userAuth = dataAccessAuth.getAuth(logoutRequest);
+        Boolean success = false;
+        AuthData userAuth = dataAccessAuth.getName(logoutRequest);
+
+        success = dataAccessAuth.deleteAuth(userAuth);
 
     }
 

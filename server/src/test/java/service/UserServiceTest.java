@@ -87,6 +87,17 @@ public class UserServiceTest {
 
     }
 
+    @Test
+    void logoutfail() throws DataAccessException, AlreadyTakenException {
+
+        var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
+        AuthData test = service.register(user);
+        AuthData other  = service.logIn(user);
+        service.logout(other.authToken());
+        service.logout((other.authToken()));
+
+    }
+
     void assertUserEqual (UserData expected, UserData actual){
         assertEquals(expected.email(), actual.email());
         assertEquals(expected.password(), actual.password());

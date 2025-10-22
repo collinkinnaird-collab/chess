@@ -22,7 +22,7 @@ public class GameService {
 
     public int createGame(String authorization, String gameName) throws DataAccessException{
 
-        AuthData gameCreatorUser = dataAccessAuth.getAuth(authorization);
+        AuthData gameCreatorUser = dataAccessAuth.getName(authorization);
 
         int gameID = dataAccessGame.createGame(gameName);
 
@@ -36,7 +36,13 @@ public class GameService {
         dataAccessGame.listGames();
     }
 
-    public void joinAGame(String auth, int ID, String desiredPlayer){
+    public void joinAGame(String auth, int ID) throws DataAccessException {
+        AuthData confirm = dataAccessAuth.getName(auth);
+
+        GameData foundGame = dataAccessGame.getGame(ID);
+
+
+
 
     }
 }

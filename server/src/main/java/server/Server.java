@@ -11,6 +11,7 @@ import io.javalin.http.Context;
 import com.google.gson.Gson;
 import model.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,20 +133,45 @@ public class Server {
         }
 
     }
-    private void listGames(Context context) throws DataAccessException{
+    private Object listGames(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
 
-        gameService.listOfGames(authHeader);
+        try {
+            Collection<GameData> newList = gameService.listOfGames(authHeader);
+            context.status(200);
+            var body = new Gson().toJson(Map.of("games", newList));
+            return context.json(body);
+        } catch (DataAccessException e) {
+            context.status(401);
+            return exceptionHandler(new DataAccessException("unauthorized"), context);
+
+        }
+
+
 
     }
 
-    private void joinGame(Context context) throws DataAccessException{
+    private Object joinGame(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
-        GameData joinGame = new Gson().fromJson(context.body(), GameData.class);
-        gameService.joinAGame(authHeader, joinGame.gameID());
+        record updateGameData(String playerColor, int ID) {}
 
+        updateGameData updatedGame = new Gson().fromJson(context.body(), updateGameData.class);
 
+        try{
+            gameService.joinAGame(authHeader, updatedGame.ID(), updatedGame.playerColor());
+            context.status(200);
+            return "{}";
+        } catch (DataAccessException e) {
+            context.status(401);
+            return exceptionHandler(new DataAccessException("unauthorized"), context);
+        } catch (BadRequestException b) {
+            context.status(400);
+            return exceptionHandler(new BadRequestException("bad request"), context);
+        } catch (AlreadyTakenException c){
+            context.status(403);
+            return exceptionHandler(new AlreadyTakenException("already taken"), context);
 
+        }
 
     }
 

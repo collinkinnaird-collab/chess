@@ -1,11 +1,10 @@
 package Service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
-import dataaccess.DataAccessException;
 import model.GameData;
+
+import java.util.Collection;
 
 public class GameService {
 
@@ -30,17 +29,45 @@ public class GameService {
 
     }
 
-    public void listOfGames(String authToken) throws DataAccessException{
-        AuthData gameCreatorUser = dataAccessAuth.getAuth(authToken);
+    public Collection<GameData> listOfGames(String authToken) throws DataAccessException{
+        AuthData gameCreatorUser = dataAccessAuth.getName(authToken);
 
-        dataAccessGame.listGames();
+        return dataAccessGame.listGames();
     }
 
-    public void joinAGame(String auth, int ID) throws DataAccessException {
+    public void joinAGame(String auth, int ID, String color) throws DataAccessException, BadRequestException
+                                                                  , AlreadyTakenException {
+
+        if(color == null){
+            throw new BadRequestException("no");
+        }
+
+
         AuthData confirm = dataAccessAuth.getName(auth);
 
         GameData foundGame = dataAccessGame.getGame(ID);
+        String white = foundGame.whiteUsername();
+        String black = foundGame.blackUsername();
+        if(color.equals("WHITE"))
+        {
+            if(white != null)
+            {
+                throw new AlreadyTakenException("already taken");
+            }
+            white = confirm.username();
+        } else if (color.equals("BLACK")){
+            if(black != null)
+            {
+                throw new AlreadyTakenException("already taken");
+            }
 
+            black = confirm.username();
+
+        }
+
+        GameData updatedGame = new GameData(ID, white, black, foundGame.gameName(), foundGame.game());
+
+        dataAccessGame.updateGame(updatedGame);
 
 
 

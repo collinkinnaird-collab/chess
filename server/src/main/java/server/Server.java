@@ -79,7 +79,7 @@ public class Server {
             return exceptionHandler(new AlreadyTakenException("already taken"), context);
         }
     }
-    private Object login(Context context) throws DataAccessException{
+    private void login(Context context) throws DataAccessException{
 
 
         UserData loginRequest = new Gson().fromJson(context.body(), UserData.class);
@@ -87,19 +87,18 @@ public class Server {
         if(loginRequest.username() == null || loginRequest.password() == null)
         {
             context.status(400);
-            return exceptionHandler(new BadRequestException("bad request"), context);
+            exceptionHandler(new BadRequestException("bad request"), context);
+            return;
         }
         try {
             AuthData newAuth = userService.logIn(loginRequest);
-            if(newAuth.authToken() == null)
-            {
-                throw new DataAccessException("unauthorized");
-            }
             context.status(200);
-            return context.json(new Gson().toJson(newAuth));
+            context.json(new Gson().toJson(newAuth));
+            return;
         } catch (DataAccessException e) {
             context.status(401);
-            return exceptionHandler(new DataAccessException("unauthorized"), context);
+            exceptionHandler(new DataAccessException("unauthorized"), context);
+            return;
         }
     }
 
@@ -153,12 +152,12 @@ public class Server {
 
     private Object joinGame(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
-        record updateGameData(String playerColor, int ID) {}
+        record updateGameData(String playerColor, Integer gameID) {}
 
         updateGameData updatedGame = new Gson().fromJson(context.body(), updateGameData.class);
 
         try{
-            gameService.joinAGame(authHeader, updatedGame.ID(), updatedGame.playerColor());
+            gameService.joinAGame(authHeader, updatedGame.gameID(), updatedGame.playerColor());
             context.status(200);
             return "{}";
         } catch (DataAccessException e) {

@@ -48,8 +48,8 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public boolean clear() throws DataAccessException {
-        return false;
+    public void clear() throws DataAccessException {
+        chessGames.clear();
     }
 
     @Override

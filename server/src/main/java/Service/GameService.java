@@ -35,10 +35,13 @@ public class GameService {
         return dataAccessGame.listGames();
     }
 
-    public void joinAGame(String auth, int ID, String color) throws DataAccessException, BadRequestException
+    public void joinAGame(String auth, Integer ID, String color) throws DataAccessException, BadRequestException
                                                                   , AlreadyTakenException {
 
         if(color == null){
+            throw new BadRequestException("no");
+        }
+        if(ID == null){
             throw new BadRequestException("no");
         }
 

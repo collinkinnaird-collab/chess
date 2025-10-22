@@ -1,5 +1,6 @@
 package Service;
 import dataaccess.*;
+import io.javalin.http.UnauthorizedResponse;
 import model.*;
 import java.util.UUID;
 
@@ -32,15 +33,6 @@ public class UserService {
 
     public AuthData logIn(UserData loginRequest) throws DataAccessException{
 
-        try{
-            AuthData test = dataAccessAuth.getAuth(loginRequest.username());
-            if(test.authToken() != null)
-            {
-                return new AuthData(null, null);
-            }
-
-        }catch (DataAccessException e) {
-
 
             String authToken = UUID.randomUUID().toString();
             AuthData loginUserAuth = new AuthData(loginRequest.username(), authToken);
@@ -50,9 +42,6 @@ public class UserService {
             dataAccessAuth.newAuth(loginUserAuth);
 
             return loginUserAuth;
-        }
-
-        return null;
 
     }
 

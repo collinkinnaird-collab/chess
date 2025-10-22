@@ -33,9 +33,16 @@ public class MemoryUserDAO implements UserDAO {
 
             if (existingUser.username().equals(userName.username())) {
 
+                if (!existingUser.password().equals(userName.password())) {
+
+                    throw new DataAccessException("unauthorized");
+                }
+
+
                 doesExist = true;
                 break;
             }
+
 
         }
         if(doesExist) {

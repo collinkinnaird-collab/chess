@@ -12,7 +12,7 @@ public class MemoryUserDAO implements UserDAO {
     private final Collection<UserData> verifiedUser = new ArrayList<>();
 
     @Override
-    public UserData register(UserData newUser) throws DataAccessException {
+    public UserData register(UserData newUser) throws DataAccessException, AlreadyTakenException {
 
         try {
             getUser(newUser);
@@ -22,7 +22,7 @@ public class MemoryUserDAO implements UserDAO {
             return newUser;
         }
 
-        throw new DataAccessException("user Already exists");
+        throw new AlreadyTakenException("user Already exists");
     }
 
     @Override

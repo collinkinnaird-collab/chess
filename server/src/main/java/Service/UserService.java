@@ -1,4 +1,5 @@
 package Service;
+import dataaccess.AlreadyTakenException;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import dataaccess.DataAccessException;
@@ -19,7 +20,7 @@ public class UserService {
         this.dataAccessAuth = dataAccessAuth;
     }
 
-    public AuthData register(UserData registerRequest) throws DataAccessException{
+    public AuthData register(UserData registerRequest) throws DataAccessException, AlreadyTakenException {
 
         String authToken = UUID.randomUUID().toString();
         AuthData userAuth = new AuthData(registerRequest.username(), authToken);
@@ -48,14 +49,6 @@ public class UserService {
     public void logout(String logoutRequest) throws DataAccessException{
 
         AuthData userAuth = dataAccessAuth.getAuth(logoutRequest);
-
-        if(dataAccessAuth.deleteAuth(userAuth));
-        {
-            System.out.println("200");
-        }
-
-
-
 
     }
 

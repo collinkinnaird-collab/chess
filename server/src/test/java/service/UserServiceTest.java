@@ -35,34 +35,55 @@ public class UserServiceTest {
     }
 
     @Test
-    void registerSuccess() throws DataAccessException{
+    @DisplayName("Create Valid User")
+    void registerSuccess() throws DataAccessException, AlreadyTakenException {
 
         UserData user = new UserData("John", "flip88", "John.Doe@gmail.com");
 
         AuthData test = service.register(user);
-        Assertions.assertEquals(DAOauth.getAuth(test.username()), test);
+        Assertions.assertEquals(DAOauth.getAuth(test.authToken()), test);
+
+
+    }
+    @Test
+    @DisplayName("Create Invalid User")
+    void registerFailure() throws DataAccessException, AlreadyTakenException {
+        UserData user = new UserData("John", "flip88", "John.Doe@gmail.com");
+
+
+        service.register(user);
+        Assertions.assertThrows(AlreadyTakenException.class, () -> service.register(user));
 
 
     }
 
     @Test
-    void loginSuccess() throws  DataAccessException{
+    void loginSuccess() throws DataAccessException, AlreadyTakenException {
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
         AuthData test = service.register(user);
+        service.logout(test.authToken());
         AuthData other  = service.logIn(user);
         Assertions.assertEquals(test.username(), other.username());
 
     }
 
     @Test
-    void logoutSuccess() throws  DataAccessException{
+    void loginFail() throws DataAccessException{
+        UserData user = new UserData("", "flip88", "John.Doe@gmail.com");
+
+        service.logIn(user);
+        Assertions.assertThrows(DataAccessException.class, () -> service.register(user));
+    }
+
+    @Test
+    void logoutSuccess() throws DataAccessException, AlreadyTakenException {
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
         AuthData test = service.register(user);
         AuthData other  = service.logIn(user);
-        service.logout(other.username());
-        Assertions.assertTrue(DAOauth.deleteAuth(other));
+        service.logout(other.authToken());
+        Assertions.assertFalse(DAOauth.deleteAuth(other));
 
     }
 

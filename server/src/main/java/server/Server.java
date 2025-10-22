@@ -3,12 +3,16 @@ package server;
 import Service.ClearService;
 import Service.GameService;
 import Service.UserService;
+import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
 import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
 import model.*;
-import java.util.UUID;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Server {
@@ -30,7 +34,10 @@ public class Server {
                 .delete("/session", this::logout)
                 .post("/game", this::createGame)
                 .get("/game", this::listGames)
-                .delete("/db", this::clear);
+                .put("/game", this::joinGame)
+                .delete("/db", this::clear)
+                .exception(Exception.class, this::exceptionHandler);
+
 
 
 
@@ -48,16 +55,47 @@ public class Server {
         return javalin.port();
     }
 
-    private void registerUser(Context context) throws DataAccessException{
-        UserData registerRequest = new Gson().fromJson(context.body(), UserData.class);
-        AuthData newAuth = userService.register(registerRequest);
-        context.json(new Gson().toJson(newAuth));
+    private Object exceptionHandler(Exception e, Context context){
+        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
+        return context.json(body);
     }
 
-    private void login(Context context) throws DataAccessException{
+    private Object registerUser(Context context) throws DataAccessException, BadRequestException, AlreadyTakenException {
+
+        UserData registerRequest = new Gson().fromJson(context.body(), UserData.class);
+
+        if(registerRequest.username() == null || registerRequest.password() == null)
+        {
+            context.status(400);
+            return exceptionHandler(new BadRequestException("bad request"), context);
+        }
+        try{
+            AuthData newAuth = userService.register(registerRequest);
+            context.status(200);
+            return context.json(new Gson().toJson(newAuth));
+        } catch (AlreadyTakenException e) {
+            context.status(403);
+            return exceptionHandler(new AlreadyTakenException("already taken"), context);
+        }
+    }
+    private Object login(Context context) throws DataAccessException{
+
+
         UserData loginRequest = new Gson().fromJson(context.body(), UserData.class);
-        AuthData newAuth = userService.logIn(loginRequest);
-        context.json(new Gson().toJson(newAuth));
+
+        if(loginRequest.username() == null || loginRequest.password() == null)
+        {
+            context.status(400);
+            return exceptionHandler(new BadRequestException("bad request"), context);
+        }
+        try {
+            AuthData newAuth = userService.logIn(loginRequest);
+            context.status(200);
+            return context.json(new Gson().toJson(newAuth));
+        } catch (DataAccessException e) {
+            context.status(401);
+            return exceptionHandler(new DataAccessException("unauthorized"), context);
+        }
     }
 
     private void logout(Context context) throws DataAccessException{
@@ -70,7 +108,7 @@ public class Server {
     private void createGame(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
         GameData makeGame = new Gson().fromJson(context.body(), GameData.class);
-        int gameID = gameService.createGame(authHeader, makeGame);
+        int gameID = gameService.createGame(authHeader, makeGame.gameName());
         context.json(new Gson().toJson(makeGame));
 
     }
@@ -81,22 +119,25 @@ public class Server {
 
     }
 
+    private void joinGame(Context context) throws DataAccessException{
+        String authHeader = context.header("authorization");
+        GameData joinGame = new Gson().fromJson(context.body(), GameData.class);
+
+        if(joinGame.blackUsername() != null) {
+            gameService.joinAGame(authHeader, joinGame.gameID(), joinGame.blackUsername());
+        }
+        else{
+            gameService.joinAGame(authHeader, joinGame.gameID(), joinGame.whiteUsername());
+        }
+
+
+
+    }
+
     private void clear(Context context) throws DataAccessException{
         clearService.clearAll();
 
     }
-
-
-
-
-
-
-
-
-
-    //    private void createHandlers(Javalin javalin){
-//        javalin.post("register", new ChessServerHandler());
-//    }
 
     public void stop() {
         javalin.stop();

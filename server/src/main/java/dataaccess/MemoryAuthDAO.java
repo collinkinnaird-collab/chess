@@ -19,7 +19,7 @@ public class MemoryAuthDAO implements AuthDAO{
     public AuthData getAuth(String user) throws DataAccessException{
 
         for (AuthData authToken : verifiedAuth){
-            if(authToken.username().equals(user)){
+            if(authToken.authToken().equals(user)){
                 return authToken;
             }
         }

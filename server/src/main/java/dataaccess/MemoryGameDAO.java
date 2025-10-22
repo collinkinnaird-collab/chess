@@ -17,15 +17,15 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData createGame(GameData gameName) throws DataAccessException {
+    public int createGame(String name) throws DataAccessException {
 
         ChessGame newGame = new ChessGame();
 
-        GameData newGameData = new GameData(chessGames.size(), gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), newGame);
+        GameData newGameData = new GameData(chessGames.size(), null, null, name, newGame);
 
         chessGames.add(newGameData);
 
-        return newGameData;
+        return newGameData.gameID();
 
     }
 
@@ -42,7 +42,8 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void listGames() throws DataAccessException {
+    public Collection<GameData> listGames() throws DataAccessException {
+        return chessGames;
 
     }
 

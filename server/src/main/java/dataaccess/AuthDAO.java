@@ -11,7 +11,7 @@ public interface AuthDAO {
 
         void newAuth(AuthData auth) throws DataAccessException;
 
-        Boolean deleteAuth(String auth) throws DataAccessException;
+        Boolean deleteAuth(AuthData auth) throws DataAccessException;
 
         void clearTotal() throws DataAccessException;
 

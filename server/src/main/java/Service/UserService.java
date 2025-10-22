@@ -47,7 +47,9 @@ public class UserService {
 
     public void logout(String logoutRequest) throws DataAccessException{
 
-        if(dataAccessAuth.deleteAuth(logoutRequest));
+        AuthData userAuth = dataAccessAuth.getAuth(logoutRequest);
+
+        if(dataAccessAuth.deleteAuth(userAuth));
         {
             System.out.println("200");
         }

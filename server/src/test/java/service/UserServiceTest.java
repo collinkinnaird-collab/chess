@@ -16,48 +16,42 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserServiceTest {
 
-    UserDAO mydao;
 
-    static final UserService service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
-    static final ClearService clear = new ClearService(new MemoryUserDAO(), new MemoryGameDAO()
-                                                     , new MemoryAuthDAO());
+    static UserService service;
+    static ClearService clear;
+    static AuthDAO DAOauth;
+    static UserDAO DAOuser;
 
-//     static private Server chessServer;
-
-//    @BeforeAll
-//    static void startServer() {
-//        var service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
-//        chessServer = new Server(service);
-//        chessServer.run(8080);
-//        var url = "http://localhost:" + chessServer.port();
-//
-//    }
 
     @BeforeEach
-    void clear() throws DataAccessException{
+    void begin() throws DataAccessException {
+        DAOauth = new MemoryAuthDAO();
+        DAOuser = new MemoryUserDAO();
+        service = new UserService(DAOuser, DAOauth);
+        clear = new ClearService(DAOuser, new MemoryGameDAO()
+                , DAOauth);
         clear.clearAll();
+
     }
 
     @Test
-    void register() throws DataAccessException{
+    void registerSuccess() throws DataAccessException{
 
-        var user = new UserData("John", "flip88", "John.Doe@gmail.com");
+        UserData user = new UserData("John", "flip88", "John.Doe@gmail.com");
 
-        UserData test = mydao.register(user);
-
-        assertUserEqual(user, test);
-
-
+        AuthData test = service.register(user);
+        Assertions.assertEquals(DAOauth.getAuth(test.username()), test);
 
 
     }
 
-    void login() throws  DataAccessException{
+    @Test
+    void loginSuccess() throws  DataAccessException{
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
-        //user = service.login();
-
-
+        AuthData test = service.register(user);
+        AuthData other  = service.logIn(user);
+        Assertions.assertEquals(test.username(), other.username());
 
     }
 

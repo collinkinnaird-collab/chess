@@ -34,7 +34,7 @@ public class ClearService {
 
 
     public void clearAuth() throws  DataAccessException {
-        dataAccessAuth.clear();
+        dataAccessAuth.clearTotal();
     }
 
     public void clearGame() throws DataAccessException {

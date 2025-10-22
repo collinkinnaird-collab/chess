@@ -22,9 +22,10 @@ public class Server {
         this.clearService = clearService;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-            .post("/register", this::registerUser)
-            .get("/login", this::login)
-                .delete("/clear", this::clear);
+            .post("/user", this::registerUser)
+            .post("/session", this::login)
+                .delete("/session", this::logout)
+                .delete("/db", this::clear);
 
 
 
@@ -50,12 +51,21 @@ public class Server {
 
     private void login(Context context) throws DataAccessException{
         UserData loginRequest = new Gson().fromJson(context.body(), UserData.class);
-        loginRequest = userService.logIn(loginRequest);
-        context.json(new Gson().toJson(loginRequest));
+        AuthData newAuth = userService.logIn(loginRequest);
+        context.json(new Gson().toJson(newAuth));
+    }
+
+    private void logout(Context context) throws DataAccessException{
+       String authHeader = context.header("authorization");
+
+       userService.logout(authHeader);
+
     }
 
     private void clear(Context context) throws DataAccessException{
         clearService.clearAll();
+
+
 
     }
 

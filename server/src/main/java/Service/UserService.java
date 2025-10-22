@@ -28,19 +28,33 @@ public class UserService {
 
         dataAccessAuth.newAuth(userAuth);
 
-
-
         return userAuth;
 
     }
 
-    public UserData logIn(UserData loginRequest) throws DataAccessException{
+    public AuthData logIn(UserData loginRequest) throws DataAccessException{
 
-        if(dataAccessUser.getUser(loginRequest) != null)
+        String authToken = UUID.randomUUID().toString();
+        AuthData loginUserAuth = new AuthData(loginRequest.username(), authToken);
+
+        dataAccessUser.getUser(loginRequest);
+
+        dataAccessAuth.newAuth(loginUserAuth);
+
+        return loginUserAuth;
+
+    }
+
+    public void logout(String logoutRequest) throws DataAccessException{
+
+        if(dataAccessAuth.deleteAuth(logoutRequest));
         {
-            throw new DataAccessException("no user found");
+            System.out.println("200");
         }
-        return dataAccessUser.getUser(loginRequest);
+
+
+
+
     }
 
 }

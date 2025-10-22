@@ -1,17 +1,31 @@
 package dataaccess;
 
 import model.AuthData;
+import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class MemoryAuthDAO implements AuthDAO{
 
-    private final Collection<AuthData> verifiedAuth = new ArrayList<>();
+    Collection<AuthData> verifiedAuth;
+
+    public MemoryAuthDAO() {
+
+        verifiedAuth = new ArrayList<>();
+    }
 
     @Override
-    public AuthData getAuth(AuthData auth) {
-        return null;
+    public AuthData getAuth(String user) throws DataAccessException{
+
+        for (AuthData authToken : verifiedAuth){
+            if(authToken.username().equals(user)){
+                return authToken;
+            }
+        }
+
+        throw new DataAccessException("No authToken");
+
     }
 
     @Override
@@ -19,14 +33,16 @@ public class MemoryAuthDAO implements AuthDAO{
         verifiedAuth.add(auth);
     }
 
-
     @Override
-    public AuthData deleteAuth(AuthData auth) {
-        return null;
+    public Boolean deleteAuth(String auth) throws DataAccessException {
+
+        return verifiedAuth.removeIf(AuthData -> AuthData.authToken().equals(auth));
+
+
     }
 
     @Override
-    public void clear() throws DataAccessException {
+    public void clearTotal() throws DataAccessException {
         verifiedAuth.clear();
     }
 }

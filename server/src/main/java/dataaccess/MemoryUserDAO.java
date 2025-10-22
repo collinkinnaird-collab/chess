@@ -42,7 +42,7 @@ public class MemoryUserDAO implements UserDAO {
             return existingUser;
         }
         else{
-            return null;
+            throw new DataAccessException("user does not exist");
         }
     }
 

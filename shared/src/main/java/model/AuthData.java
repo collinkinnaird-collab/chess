@@ -3,7 +3,7 @@ import java.util.UUID;
 
 import com.google.gson.Gson;
 
-public record AuthData(String authToken, String username) {
+public record AuthData(String username, String authToken) {
 
 
 //    public AuthData newAuthToken(UserData user){

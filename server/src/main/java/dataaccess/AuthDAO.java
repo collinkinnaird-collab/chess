@@ -7,11 +7,14 @@ import java.util.UUID;
 
 public interface AuthDAO {
 
-        AuthData getAuth(AuthData auth) throws DataAccessException;
+        AuthData getAuth(String auth) throws DataAccessException;
 
         void newAuth(AuthData auth) throws DataAccessException;
 
-        AuthData deleteAuth(AuthData auth) throws DataAccessException;
+        Boolean deleteAuth(String auth) throws DataAccessException;
 
-        void clear() throws DataAccessException;
+        void clearTotal() throws DataAccessException;
+
+
+        //void clear
 }

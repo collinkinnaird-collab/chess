@@ -1,6 +1,7 @@
 package server;
 
 import Service.ClearService;
+import Service.GameService;
 import Service.UserService;
 import dataaccess.DataAccessException;
 import io.javalin.*;
@@ -15,16 +16,20 @@ public class Server {
     private final Javalin javalin;
     private final UserService userService;
     private final ClearService clearService;
+    private final GameService gameService;
 
-    public Server(UserService userService, ClearService clearService) {
+    public Server(UserService userService, ClearService clearService, GameService gameService) {
 
         this.userService = userService;
         this.clearService = clearService;
+        this.gameService = gameService;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
             .post("/user", this::registerUser)
             .post("/session", this::login)
                 .delete("/session", this::logout)
+                .post("/game", this::createGame)
+                .get("/game", this::listGames)
                 .delete("/db", this::clear);
 
 
@@ -62,10 +67,22 @@ public class Server {
 
     }
 
+    private void createGame(Context context) throws DataAccessException{
+        String authHeader = context.header("authorization");
+        GameData makeGame = new Gson().fromJson(context.body(), GameData.class);
+        int gameID = gameService.createGame(authHeader, makeGame);
+        context.json(new Gson().toJson(makeGame));
+
+    }
+    private void listGames(Context context) throws DataAccessException{
+        String authHeader = context.header("authorization");
+
+        gameService.listOfGames(authHeader);
+
+    }
+
     private void clear(Context context) throws DataAccessException{
         clearService.clearAll();
-
-
 
     }
 

@@ -1,11 +1,10 @@
 package passoff.server;
 
 import Service.ClearService;
+import Service.GameService;
 import Service.UserService;
 import chess.ChessGame;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 import server.Server;
@@ -23,6 +22,9 @@ public class StandardAPITests {
     private static Server server;
     private String existingAuth;
 
+    static AuthDAO DAOauth;
+    static UserDAO DAOuser;
+    static GameDAO DAOgame;
     // ### TESTING SETUP/CLEANUP ###
 
     @AfterAll
@@ -32,8 +34,14 @@ public class StandardAPITests {
 
     @BeforeAll
     public static void init() {
-        server = new Server(new UserService(new MemoryUserDAO(), new MemoryAuthDAO())
-                          , new ClearService(new MemoryUserDAO(), new MemoryGameDAO(), new MemoryAuthDAO()));
+
+        DAOauth = new MemoryAuthDAO();
+        DAOuser = new MemoryUserDAO();
+        DAOgame = new MemoryGameDAO();
+
+        server = new Server(new UserService(DAOuser, DAOauth)
+                          , new ClearService(DAOuser, DAOgame, DAOauth),
+                            new GameService(DAOuser, DAOgame, DAOauth));
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 

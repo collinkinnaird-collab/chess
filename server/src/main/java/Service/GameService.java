@@ -38,7 +38,11 @@ public class GameService {
     public void joinAGame(String auth, Integer ID, String color) throws DataAccessException, BadRequestException
                                                                   , AlreadyTakenException {
 
-        if(color == null){
+        if (color == null){
+            throw new BadRequestException("no");
+        }
+        if(!color.equals("WHITE") && !color.equals("BLACK"))
+        {
             throw new BadRequestException("no");
         }
         if(ID == null){

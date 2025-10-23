@@ -159,7 +159,10 @@ public class Server {
         try{
             gameService.joinAGame(authHeader, updatedGame.gameID(), updatedGame.playerColor());
             context.status(200);
-            return "{}";
+
+            return("{}");
+//            var body = new Gson().toJson("{}");
+//            return context.json(body);
         } catch (DataAccessException e) {
             context.status(401);
             return exceptionHandler(new DataAccessException("unauthorized"), context);

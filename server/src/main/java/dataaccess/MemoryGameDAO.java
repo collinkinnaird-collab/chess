@@ -21,7 +21,7 @@ public class MemoryGameDAO implements GameDAO{
 
         ChessGame newGame = new ChessGame();
 
-        GameData newGameData = new GameData(chessGames.size(), null, null, name, newGame);
+        GameData newGameData = new GameData(chessGames.size() + 1, null, null, name, newGame);
 
         chessGames.add(newGameData);
 
@@ -32,6 +32,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public GameData getGame(int ID) throws DataAccessException {
 
+        // arraylist.get()
         for (GameData gameId : chessGames) {
 
             if (gameId.gameID() == ID) {

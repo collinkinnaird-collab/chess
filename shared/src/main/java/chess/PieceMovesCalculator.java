@@ -140,26 +140,6 @@ interface PieceMovesCalculator {
                     }
 
                     shortenLoops(anotherPiece, path, updateXaxis, updateYaxis, pawnPieceMoves, myPosition, myPiece, behind);
-//                    if (anotherPiece != null) {
-//                        if (anotherPiece.pieceColor != myPiece.pieceColor && path[1] != 0) {
-//                            if (updateXaxis == 8 || updateXaxis == 1) {
-//                                addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
-//
-//                            } else{
-//                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-//                                                   new ChessPosition(updateXaxis, updateYaxis), null ));
-//
-//                            }
-//                        }
-//
-//                    } else {
-//                        if ((updateXaxis == 8 || updateXaxis == 1) && path[1] == 0) {
-//                            addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
-//                        }else if (path[1] == 0 && !behind){
-//                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-//                                               new ChessPosition(updateXaxis, updateYaxis), null));
-//                        }
-//                    }
             }
 
         }

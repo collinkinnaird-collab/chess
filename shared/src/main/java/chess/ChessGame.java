@@ -184,9 +184,10 @@ public class ChessGame implements CheckMateCalculator{
 
 
         ChessPiece kingPiece;
-        ChessPosition enemyPosition;
+        ChessPosition enemyPosition = new ChessPosition(0,0);
         ChessPosition kingPosition = new ChessPosition(0,0);
         Collection<ChessMove> otherMoves = new ArrayList<>();
+        int counter=0;
 
         // look for the King
         for(int i = 1; i <= 8; i++){
@@ -211,13 +212,11 @@ public class ChessGame implements CheckMateCalculator{
                     if(testPiece.pieceColor != teamColor){
                         otherMoves = testPiece.pieceMoves(gameBoard, new ChessPosition(k,l));
                         Iterator<ChessMove> iterator = otherMoves.iterator();
-                        while(iterator.hasNext())
-                        {
-                            enemyPosition = iterator.next().getEndPosition();
-                            if(enemyPosition.equals(kingPosition)){
-                                return true;
-                            }
-                        }
+                        counter += whileShortner(iterator, enemyPosition, kingPosition);
+                    }
+                    if(counter > 0)
+                    {
+                        return true;
                     }
                 }
 
@@ -235,6 +234,7 @@ public class ChessGame implements CheckMateCalculator{
      */
     public boolean isInCheckmate(TeamColor teamColor) {
 
+        int check = 0;
         boolean forSure = true;
 
         // its basically chekcmakte is these are true
@@ -248,12 +248,13 @@ public class ChessGame implements CheckMateCalculator{
                     {
                         ChessPiece testPiece = gameBoard.getPiece(new ChessPosition(k,l));
                         ChessPosition myPosition = new ChessPosition(k,l);
-                        if(testPiece.pieceColor == teamColor){
-                           if (!validMoves(myPosition).isEmpty()){
-                               forSure = false;
-                           }
 
-                        }
+                      check += loopShortner(testPiece, teamColor, myPosition);
+
+                    }
+                    if(check > 0 )
+                    {
+                        forSure = false;
                     }
 
                 }
@@ -346,6 +347,27 @@ public class ChessGame implements CheckMateCalculator{
     @Override
     public int hashCode() {
         return Objects.hash(gameBoard, teamTurn);
+    }
+
+    public int loopShortner(ChessPiece testPiece, TeamColor teamColor,ChessPosition myPosition ) {
+        if(testPiece.pieceColor == teamColor){
+            if (!validMoves(myPosition).isEmpty()){
+                return 1;
+            }
+
+        }
+        return 0;
+    }
+
+    public int whileShortner(Iterator<ChessMove> iterator,ChessPosition enemyPosition, ChessPosition kingPosition ){
+        while(iterator.hasNext())
+        {
+            enemyPosition = iterator.next().getEndPosition();
+            if(enemyPosition.equals(kingPosition)){
+                return 1;
+            }
+        }
+        return 0;
     }
 
 

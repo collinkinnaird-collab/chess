@@ -139,30 +139,55 @@ interface PieceMovesCalculator {
                         }
                     }
 
-                    if (anotherPiece != null) {
-                        if (anotherPiece.pieceColor != myPiece.pieceColor && path[1] != 0) {
-                            if (updateXaxis == 8 || updateXaxis == 1) {
-                                addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
-
-                            } else{
-                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                                   new ChessPosition(updateXaxis, updateYaxis), null ));
-
-                            }
-                        }
-
-                    } else {
-                        if ((updateXaxis == 8 || updateXaxis == 1) && path[1] == 0) {
-                            addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
-                        }else if (path[1] == 0 && !behind){
-                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                               new ChessPosition(updateXaxis, updateYaxis), null));
-                        }
-                    }
+                    shortenLoops(anotherPiece, path, updateXaxis, updateYaxis, pawnPieceMoves, myPosition, myPiece, behind);
+//                    if (anotherPiece != null) {
+//                        if (anotherPiece.pieceColor != myPiece.pieceColor && path[1] != 0) {
+//                            if (updateXaxis == 8 || updateXaxis == 1) {
+//                                addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
+//
+//                            } else{
+//                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+//                                                   new ChessPosition(updateXaxis, updateYaxis), null ));
+//
+//                            }
+//                        }
+//
+//                    } else {
+//                        if ((updateXaxis == 8 || updateXaxis == 1) && path[1] == 0) {
+//                            addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
+//                        }else if (path[1] == 0 && !behind){
+//                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+//                                               new ChessPosition(updateXaxis, updateYaxis), null));
+//                        }
+//                    }
             }
 
         }
         return pawnPieceMoves;
+    }
+
+    public default void shortenLoops(ChessPiece anotherPiece, int[] path, int updateXaxis, int updateYaxis,
+                                     List<ChessMove> pawnPieceMoves, ChessPosition myPosition, ChessPiece myPiece, boolean behind){
+        if (anotherPiece != null) {
+            if (anotherPiece.pieceColor != myPiece.pieceColor && path[1] != 0) {
+                if (updateXaxis == 8 || updateXaxis == 1) {
+                    addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
+
+                } else{
+                    pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                            new ChessPosition(updateXaxis, updateYaxis), null ));
+
+                }
+            }
+
+        } else {
+            if ((updateXaxis == 8 || updateXaxis == 1) && path[1] == 0) {
+                addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
+            }else if (path[1] == 0 && !behind){
+                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                        new ChessPosition(updateXaxis, updateYaxis), null));
+            }
+        }
     }
 
     public default void addPawns(Collection<ChessMove> pawnPieceMoves, ChessPosition myPosition,int updateXaxis, int updateYaxis ){
@@ -175,6 +200,7 @@ interface PieceMovesCalculator {
         pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
                 new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.BISHOP));
     }
+
 
 
 }

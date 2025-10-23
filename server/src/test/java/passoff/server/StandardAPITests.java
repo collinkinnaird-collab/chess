@@ -19,10 +19,9 @@ public class StandardAPITests {
     private static TestServerFacade serverFacade;
     private static Server server;
     private String existingAuth;
-    static AuthDAO daoAuth;
-    static UserDAO daoUser;
-    static GameDAO daoGame;
+
     // ### TESTING SETUP/CLEANUP ###
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -30,11 +29,7 @@ public class StandardAPITests {
 
     @BeforeAll
     public static void init() {
-        daoAuth = new MemoryAuthDAO();
-        daoUser = new MemoryUserDAO();
-        daoGame = new MemoryGameDAO();
-        server = new Server(new UserService(daoUser, daoAuth), new ClearService(daoUser, daoGame, daoAuth),
-                            new GameService(daoUser, daoGame, daoAuth));
+        server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));

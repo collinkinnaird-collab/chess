@@ -1,11 +1,9 @@
 package server;
 
+import dataaccess.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
@@ -18,15 +16,16 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    private final UserService userService;
-    private final ClearService clearService;
-    private final GameService gameService;
+    UserDAO dataAccessUser = new MemoryUserDAO();
+    AuthDAO dataAccessAuth = new MemoryAuthDAO();
+    GameDAO dataAccessGame = new MemoryGameDAO();
 
-    public Server(UserService userService, ClearService clearService, GameService gameService) {
+     UserService userService = new UserService(dataAccessUser, dataAccessAuth);
+     ClearService clearService = new ClearService(dataAccessUser, dataAccessGame, dataAccessAuth);
+     GameService gameService = new GameService(dataAccessUser, dataAccessGame, dataAccessAuth);
 
-        this.userService = userService;
-        this.clearService = clearService;
-        this.gameService = gameService;
+    public Server() {
+
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
             .post("/user", this::registerUser)

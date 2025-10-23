@@ -151,9 +151,9 @@ public class Server {
 
     private Object joinGame(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
-        record updateGameData(String playerColor, Integer gameID) {}
+        record UpdateGameData(String playerColor, Integer gameID) {}
 
-        updateGameData updatedGame = new Gson().fromJson(context.body(), updateGameData.class);
+        UpdateGameData updatedGame = new Gson().fromJson(context.body(), UpdateGameData.class);
 
         try{
             gameService.joinAGame(authHeader, updatedGame.gameID(), updatedGame.playerColor());

@@ -30,13 +30,13 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int ID) throws DataAccessException {
+    public GameData getGame(int gameId) throws DataAccessException {
 
         // arraylist.get()
-        for (GameData gameId : chessGames) {
+        for (GameData allGameId : chessGames) {
 
-            if (gameId.gameID() == ID) {
-                return gameId;
+            if (allGameId.gameID() == gameId) {
+                return allGameId;
             }
         }
             throw new DataAccessException("Game does not exist");

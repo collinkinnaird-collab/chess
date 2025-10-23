@@ -8,25 +8,21 @@ import dataaccess.*;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 import server.Server;
-
 import java.net.HttpURLConnection;
 import java.util.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StandardAPITests {
-
     private static TestUser existingUser;
     private static TestUser newUser;
     private static TestCreateRequest createRequest;
     private static TestServerFacade serverFacade;
     private static Server server;
     private String existingAuth;
-
-    static AuthDAO DAOauth;
-    static UserDAO DAOuser;
-    static GameDAO DAOgame;
+    static AuthDAO daoAuth;
+    static UserDAO daoUser;
+    static GameDAO daoGame;
     // ### TESTING SETUP/CLEANUP ###
-
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -34,17 +30,13 @@ public class StandardAPITests {
 
     @BeforeAll
     public static void init() {
-
-        DAOauth = new MemoryAuthDAO();
-        DAOuser = new MemoryUserDAO();
-        DAOgame = new MemoryGameDAO();
-
-        server = new Server(new UserService(DAOuser, DAOauth)
-                          , new ClearService(DAOuser, DAOgame, DAOauth),
-                            new GameService(DAOuser, DAOgame, DAOauth));
+        daoAuth = new MemoryAuthDAO();
+        daoUser = new MemoryUserDAO();
+        daoGame = new MemoryGameDAO();
+        server = new Server(new UserService(daoUser, daoAuth), new ClearService(daoUser, daoGame, daoAuth),
+                            new GameService(daoUser, daoGame, daoAuth));
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
         existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
         newUser = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
@@ -472,9 +464,7 @@ public class StandardAPITests {
         //make sure returned good
         assertHttpOk(result);
     }
-
     // ### HELPER ASSERTIONS ###
-
     private void assertHttpOk(TestResult result) {
         Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
                 "Server response code was not 200 OK (message: %s)".formatted(result.getMessage()));
@@ -507,5 +497,4 @@ public class StandardAPITests {
         Assertions.assertNull(result.getUsername(), "Response incorrectly returned username");
         Assertions.assertNull(result.getAuthToken(), "Response incorrectly return authentication String");
     }
-
 }

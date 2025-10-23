@@ -37,7 +37,7 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public Boolean deleteAuth(AuthData auth) throws DataAccessException {
 
-        return verifiedAuth.removeIf(AuthData -> AuthData.authToken().equals(auth.authToken()));
+        return verifiedAuth.removeIf(authData -> authData.authToken().equals(auth.authToken()));
 
 
     }

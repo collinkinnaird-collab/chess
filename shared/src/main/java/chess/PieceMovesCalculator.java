@@ -142,14 +142,7 @@ interface PieceMovesCalculator {
                     if (anotherPiece != null) {
                         if (anotherPiece.pieceColor != myPiece.pieceColor && path[1] != 0) {
                             if (updateXaxis == 8 || updateXaxis == 1) {
-                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                                   new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.QUEEN));
-                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                                   new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.ROOK));
-                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                                   new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.KNIGHT));
-                                pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                                   new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.BISHOP));
+                                addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
 
                             } else{
                                 pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
@@ -160,14 +153,7 @@ interface PieceMovesCalculator {
 
                     } else {
                         if ((updateXaxis == 8 || updateXaxis == 1) && path[1] == 0) {
-                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                               new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.QUEEN));
-                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                               new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.ROOK));
-                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                               new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.KNIGHT));
-                            pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
-                                               new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.BISHOP));
+                            addPawns(pawnPieceMoves, myPosition, updateXaxis, updateYaxis);
                         }else if (path[1] == 0 && !behind){
                             pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
                                                new ChessPosition(updateXaxis, updateYaxis), null));
@@ -177,6 +163,17 @@ interface PieceMovesCalculator {
 
         }
         return pawnPieceMoves;
+    }
+
+    public default void addPawns(Collection<ChessMove> pawnPieceMoves, ChessPosition myPosition,int updateXaxis, int updateYaxis ){
+        pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.QUEEN));
+        pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.ROOK));
+        pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.KNIGHT));
+        pawnPieceMoves.add(new ChessMove(new ChessPosition(myPosition.getRow(), myPosition.getColumn()),
+                new ChessPosition(updateXaxis, updateYaxis), ChessPiece.PieceType.BISHOP));
     }
 
 

@@ -1,8 +1,8 @@
 package server;
 
-import Service.ClearService;
-import Service.GameService;
-import Service.UserService;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 import dataaccess.AlreadyTakenException;
 import dataaccess.BadRequestException;
 import dataaccess.DataAccessException;
@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import model.*;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 

@@ -1,8 +1,8 @@
 package passoff.server;
 
-import Service.ClearService;
-import Service.GameService;
-import Service.UserService;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 import chess.ChessGame;
 import dataaccess.*;
 import org.junit.jupiter.api.*;

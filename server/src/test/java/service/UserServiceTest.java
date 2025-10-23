@@ -1,14 +1,9 @@
 package service;
 
-import Service.UserService;
-import Service.ClearService;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import server.Server;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -97,13 +92,6 @@ public class UserServiceTest {
         service.logout((other.authToken()));
 
     }
-
-    void assertUserEqual (UserData expected, UserData actual){
-        assertEquals(expected.email(), actual.email());
-        assertEquals(expected.password(), actual.password());
-        assertEquals(expected.username(), actual.username());
-    }
-
 
 
 }

@@ -149,7 +149,8 @@ public class ChessGame implements CheckMateCalculator{
                     // update the board if the move is legit
                 } else if (isLegit) {
                     gameBoard.addPiece(move.getEndPosition(), trialPiece);
-                    if(trialPiece.getPieceType() == ChessPiece.PieceType.PAWN && (move.getEndPosition().getRow() == 1 ||move.getEndPosition().getRow() == 8))
+                    if(trialPiece.getPieceType() == ChessPiece.PieceType.PAWN
+                            && (move.getEndPosition().getRow() == 1 ||move.getEndPosition().getRow() == 8))
                     {
                         gameBoard.addPiece(move.getEndPosition(), new ChessPiece(teamTurn, move.getPromotionPiece()));
                     }
@@ -278,7 +279,6 @@ public class ChessGame implements CheckMateCalculator{
      */
     public boolean isInStalemate(TeamColor teamColor) {
 
-        // repeat code, TODO: put this in interface
         ChessPiece kingPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         ChessPosition kingPosition = new ChessPosition(0,0);
 

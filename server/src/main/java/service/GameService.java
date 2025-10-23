@@ -1,4 +1,4 @@
-package Service;
+package service;
 
 import dataaccess.*;
 import model.AuthData;
@@ -35,7 +35,7 @@ public class GameService {
         return dataAccessGame.listGames();
     }
 
-    public void joinAGame(String auth, Integer ID, String color) throws DataAccessException, BadRequestException
+    public void joinAGame(String auth, Integer nameId, String color) throws DataAccessException, BadRequestException
                                                                   , AlreadyTakenException {
 
         if (color == null){
@@ -45,14 +45,14 @@ public class GameService {
         {
             throw new BadRequestException("no");
         }
-        if(ID == null){
+        if(nameId == null){
             throw new BadRequestException("no");
         }
 
 
         AuthData confirm = dataAccessAuth.getName(auth);
 
-        GameData foundGame = dataAccessGame.getGame(ID);
+        GameData foundGame = dataAccessGame.getGame(nameId);
         String white = foundGame.whiteUsername();
         String black = foundGame.blackUsername();
         if(color.equals("WHITE"))
@@ -72,7 +72,7 @@ public class GameService {
 
         }
 
-        GameData updatedGame = new GameData(ID, white, black, foundGame.gameName(), foundGame.game());
+        GameData updatedGame = new GameData(nameId, white, black, foundGame.gameName(), foundGame.game());
 
         dataAccessGame.updateGame(updatedGame);
 

@@ -1,15 +1,9 @@
-package Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import model.*;
-
 
 
 public class ClearService {

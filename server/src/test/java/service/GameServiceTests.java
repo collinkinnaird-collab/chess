@@ -1,17 +1,10 @@
 package service;
 
-import Service.ClearService;
-import Service.GameService;
-import Service.UserService;
-import chess.ChessGame;
 import dataaccess.*;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import passoff.chess.game.GameStatusTests;
 
 import java.util.UUID;
 
@@ -54,13 +47,6 @@ public class GameServiceTests {
         //Assertions.assertEquals(DAOgame.createGame(myGame), myGame.gameID());
 
 
-    }
-
-
-    void assertUserEqual (UserData expected, UserData actual){
-        assertEquals(expected.email(), actual.email());
-        assertEquals(expected.password(), actual.password());
-        assertEquals(expected.username(), actual.username());
     }
 
 

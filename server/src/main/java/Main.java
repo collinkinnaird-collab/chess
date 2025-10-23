@@ -1,6 +1,6 @@
-import Service.ClearService;
-import Service.GameService;
-import Service.UserService;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 import dataaccess.*;
 import server.Server;
 

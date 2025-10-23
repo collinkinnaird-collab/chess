@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-interface PieceMovesCalculator {
+interface PieceMovesCalculator  {
 
 
     Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition );

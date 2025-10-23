@@ -17,20 +17,20 @@ public class GameServiceTests {
     static UserService service;
     static ClearService clear;
     static GameService gameService;
-    static AuthDAO DAOauth;
-    static UserDAO DAOuser;
-    static GameDAO DAOgame;
+    static AuthDAO daoAuth;
+    static UserDAO daoUser;
+    static GameDAO daoGame;
 
 
     @BeforeEach
     void begin() throws DataAccessException {
-        DAOauth = new MemoryAuthDAO();
-        DAOuser = new MemoryUserDAO();
-        DAOgame = new MemoryGameDAO();
-        service = new UserService(DAOuser, DAOauth);
-        clear = new ClearService(DAOuser, DAOgame
-                , DAOauth);
-        gameService = new GameService(DAOuser, DAOgame, DAOauth);
+        daoAuth = new MemoryAuthDAO();
+        daoUser = new MemoryUserDAO();
+        daoGame = new MemoryGameDAO();
+        service = new UserService(daoUser, daoAuth);
+        clear = new ClearService(daoUser, daoGame
+                , daoAuth);
+        gameService = new GameService(daoUser, daoGame, daoAuth);
         clear.clearAll();
 
     }

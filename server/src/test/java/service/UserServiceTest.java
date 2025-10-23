@@ -14,17 +14,17 @@ public class UserServiceTest {
 
     static UserService service;
     static ClearService clear;
-    static AuthDAO DAOauth;
-    static UserDAO DAOuser;
+    static AuthDAO daoAuth;
+    static UserDAO daoUser;
 
 
     @BeforeEach
     void begin() throws DataAccessException {
-        DAOauth = new MemoryAuthDAO();
-        DAOuser = new MemoryUserDAO();
-        service = new UserService(DAOuser, DAOauth);
-        clear = new ClearService(DAOuser, new MemoryGameDAO()
-                , DAOauth);
+        daoAuth = new MemoryAuthDAO();
+        daoUser = new MemoryUserDAO();
+        service = new UserService(daoUser, daoAuth);
+        clear = new ClearService(daoUser, new MemoryGameDAO()
+                , daoAuth);
         clear.clearAll();
 
     }
@@ -36,7 +36,7 @@ public class UserServiceTest {
         UserData user = new UserData("John", "flip88", "John.Doe@gmail.com");
 
         AuthData test = service.register(user);
-        Assertions.assertEquals(DAOauth.getAuth(test.authToken()), test);
+        Assertions.assertEquals(daoAuth.getAuth(test.authToken()), test);
 
 
     }
@@ -78,7 +78,7 @@ public class UserServiceTest {
         AuthData test = service.register(user);
         AuthData other  = service.logIn(user);
         service.logout(other.authToken());
-        Assertions.assertFalse(DAOauth.deleteAuth(other));
+        Assertions.assertFalse(daoAuth.deleteAuth(other));
 
     }
 

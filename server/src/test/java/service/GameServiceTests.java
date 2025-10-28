@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +45,7 @@ public class GameServiceTests {
         AuthData loginUserAuth = new AuthData("SWAG", authToken);
 
         int myGame = gameService.createGame(loginUserAuth.authToken(), "EPIC_GAME");
-        //Assertions.assertEquals(DAOgame.createGame(myGame), myGame.gameID());
+        Assertions.assertEquals("EPIC_GAME", daoGame.createGame("EPIC_GAME"));
 
 
     }

@@ -29,13 +29,13 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void newAuth(AuthData auth) throws DataAccessException {
+    public void newAuth(AuthData auth){
 
         verifiedAuth.add(auth);
     }
 
     @Override
-    public Boolean deleteAuth(AuthData auth) throws DataAccessException {
+    public Boolean deleteAuth(AuthData auth){
 
         return verifiedAuth.removeIf(authData -> authData.authToken().equals(auth.authToken()));
 
@@ -43,7 +43,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void clearTotal() throws DataAccessException {
+    public void clearTotal(){
         verifiedAuth.clear();
     }
 

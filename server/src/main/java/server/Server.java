@@ -1,5 +1,6 @@
 package server;
 
+
 import dataaccess.*;
 import service.ClearService;
 import service.GameService;
@@ -16,15 +17,43 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    UserDAO dataAccessUser = new MemoryUserDAO();
-    AuthDAO dataAccessAuth = new MemoryAuthDAO();
-    GameDAO dataAccessGame = new MemoryGameDAO();
+    UserDAO dataAccessUser;
 
-     UserService userService = new UserService(dataAccessUser, dataAccessAuth);
+    {
+        try {
+            dataAccessUser = new MySqlUserDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    AuthDAO dataAccessAuth;
+
+    {
+        try {
+            dataAccessAuth = new MySqlAuthDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    GameDAO dataAccessGame;
+
+    {
+        try {
+            dataAccessGame = new MySqlGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    UserService userService = new UserService(dataAccessUser, dataAccessAuth);
      ClearService clearService = new ClearService(dataAccessUser, dataAccessGame, dataAccessAuth);
      GameService gameService = new GameService(dataAccessUser, dataAccessGame, dataAccessAuth);
 
     public Server() {
+
+
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))

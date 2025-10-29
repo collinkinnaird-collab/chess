@@ -1,9 +1,6 @@
 package dataaccess;
 
-import dataaccess.DataAccessException;
 import model.UserData;
-import model.AuthData;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.*;
 

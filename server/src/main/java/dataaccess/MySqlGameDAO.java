@@ -6,6 +6,13 @@ import java.util.Collection;
 import java.util.List;
 
 public class MySqlGameDAO implements GameDAO{
+
+
+    public MySqlGameDAO() throws DataAccessException{
+        MySqlDaoHelper.configureDatabase();
+    }
+
+
     @Override
     public int createGame(String name) throws DataAccessException {
         return 0;

@@ -16,7 +16,7 @@ public interface MySqlDaoHelper {
             CREATE TABLE IF NOT EXISTS user (
               id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
               username varchar(256) NOT NULL,
-              password int NOT NULL,
+              password varchar(256) NOT NULL,
               email varchar(256) NOT NULL
               )
             """,
@@ -34,12 +34,9 @@ public interface MySqlDaoHelper {
               whiteUsername VARCHAR(256),
               blackUsername VARCHAR(256),
               gameName VARCHAR(256) NOT NULL,
-              game JSON
+              json TEXT DEFAULT NULL
             )
-
             """
-
-
     };
 
      static int executeUpdate(String statement, Object... params) throws DataAccessException {
@@ -62,7 +59,7 @@ public interface MySqlDaoHelper {
                 return 0;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("nope");
+            throw new DataAccessException("executeUpdateError");
         }
     }
 
@@ -75,7 +72,7 @@ public interface MySqlDaoHelper {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException("nope");
+            throw new DataAccessException("configureDatabaseError");
         }
     }
 }

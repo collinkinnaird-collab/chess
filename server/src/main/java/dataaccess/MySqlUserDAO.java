@@ -36,7 +36,7 @@ public class MySqlUserDAO implements UserDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("no");
+            throw new DataAccessException("getUser error");
         }
         return null;
     }

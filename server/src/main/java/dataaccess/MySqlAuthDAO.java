@@ -32,7 +32,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("no");
+            throw new DataAccessException("GET AUTH ERROR");
         }
         return null;
     }
@@ -69,7 +69,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("no");
+            throw new DataAccessException("GET NAME ERRROR");
         }
         return null;
     }

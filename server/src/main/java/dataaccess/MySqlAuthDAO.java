@@ -40,14 +40,19 @@ public class MySqlAuthDAO implements AuthDAO{
     @Override
     public void newAuth(AuthData auth) throws DataAccessException {
         var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
-        int id = MySqlDaoHelper.executeUpdate(statement, auth.username(), auth.authToken());
+        MySqlDaoHelper.executeUpdate(statement, auth.username(), auth.authToken());
     }
 
     @Override
     public Boolean deleteAuth(AuthData auth) throws DataAccessException {
         var statement = "DELETE FROM auth WHERE username=?";
-        MySqlDaoHelper.executeUpdate(statement, auth.username());
-        return true;
+        if(auth != null) {
+            MySqlDaoHelper.executeUpdate(statement, auth.username());
+            return true;
+        }
+        else{
+            throw new DataAccessException("error");
+        }
     }
 
     @Override
@@ -59,7 +64,7 @@ public class MySqlAuthDAO implements AuthDAO{
     @Override
     public AuthData getName(String auth) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken FROM auth WHERE authToken=?";
+            var statement = "SELECT username, authToken FROM auth WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, auth);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -71,13 +76,13 @@ public class MySqlAuthDAO implements AuthDAO{
         } catch (Exception e) {
             throw new DataAccessException("GET NAME ERRROR");
         }
-        return null;
+        throw new DataAccessException("does not exist");
     }
 
     private AuthData readAuth(ResultSet result) throws SQLException{
-        var id = result.getInt("id");
         String username = result.getNString("username");
         String authToken = result.getNString("authToken");
+
         return new AuthData(username, authToken);
     }
 

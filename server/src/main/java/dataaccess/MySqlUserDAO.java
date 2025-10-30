@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,27 +19,36 @@ public class MySqlUserDAO implements UserDAO{
 
     @Override
     public UserData register(UserData newUser) throws DataAccessException, AlreadyTakenException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        int id = MySqlDaoHelper.executeUpdate(statement, newUser.username(), newUser.password(), newUser.email());
-        return newUser;
+
+        try{
+            getUser(newUser);
+        } catch(Exception e) {
+            var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+            String hashed = storeUserPassword(newUser.password());
+            MySqlDaoHelper.executeUpdate(statement, newUser.username(), hashed, newUser.email());
+            return newUser;
+        }
+
+        throw new AlreadyTakenException("user already exists");
     }
 
     @Override
     public UserData getUser(UserData existingUser) throws DataAccessException {
+
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username FROM user WHERE username=?";
+            var statement = "SELECT username, password FROM user WHERE username=? ";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, existingUser.username());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUser(rs);
+                        return readUser(rs, existingUser.password(), existingUser.email());
                     }
                 }
             }
         } catch (Exception e) {
             throw new DataAccessException("getUser error");
         }
-        return null;
+        throw new DataAccessException("Empty Database");
     }
 
     @Override
@@ -47,11 +57,26 @@ public class MySqlUserDAO implements UserDAO{
         MySqlDaoHelper.executeUpdate(statement);
     }
 
-    private UserData readUser(ResultSet result) throws SQLException {
-        var id = result.getInt("id");
+    private UserData readUser(ResultSet result, String userPassword, String email) throws SQLException, DataAccessException {
         String username = result.getNString("username");
-        String password = result.getNString("password");
-        String email = result.getNString("email");
-        return new UserData(username, password, email);
+        if(!verifyUser(result.getNString("password"), userPassword)){
+            throw new DataAccessException("badPassword");
+        }
+
+
+        return new UserData(username, userPassword, email);
+
+    }
+
+    private String storeUserPassword(String clearTextPassword) {
+        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+
+        return hashedPassword;
+
+    }
+
+    boolean verifyUser(String previousPassword, String currentPassword) {
+
+        return BCrypt.checkpw(currentPassword, previousPassword);
     }
 }

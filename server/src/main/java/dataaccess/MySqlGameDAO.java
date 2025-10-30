@@ -26,26 +26,20 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public int createGame(String name) throws DataAccessException {
-        var statement = "INSERT INTO game (gameId, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        var statement = "INSERT INTO game ( whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?)";
 
         ChessGame newGame = new ChessGame();
 
-        GameData newGameData = new GameData(chessGames.size() + 1, null, null, name, newGame);
-
-        chessGames.add(newGameData);
-
         String json = new Gson().toJson(newGame);
 
-        MySqlDaoHelper.executeUpdate(statement, newGameData.gameID()
-                                            , newGameData.whiteUsername(), newGameData.blackUsername()
-                                            , newGameData.gameName(), json);
-        return newGameData.gameID();
+        return MySqlDaoHelper.executeUpdate(statement, null, null
+                                            , name, json);
     }
 
     @Override
     public GameData getGame(int gameId) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameId FROM game WHERE gameId=?";
+            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, json FROM game WHERE gameId=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameId);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -64,11 +58,12 @@ public class MySqlGameDAO implements GameDAO{
     public Collection<GameData> listGames() throws DataAccessException {
         var result = new ListOfGames();
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName FROM game";
+            var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, json FROM game";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                        result.add(readGame(rs));
+
                     }
                 }
             }
@@ -91,7 +86,7 @@ public class MySqlGameDAO implements GameDAO{
         var statement = "DELETE FROM game WHERE gameId=?";
         MySqlDaoHelper.executeUpdate(statement, gameData.gameID());
 
-        var statement2 = "INSERT INTO game (gameId, whiteUsername, blackUsername, gameName, gameData) VALUES (?, ?, ?, ?, ?)";
+        var statement2 = "INSERT INTO game (gameId, whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?, ?)";
         String json = new Gson().toJson(gameData.game());
         MySqlDaoHelper.executeUpdate(statement2, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),  gameData.gameName()
                                     , json);

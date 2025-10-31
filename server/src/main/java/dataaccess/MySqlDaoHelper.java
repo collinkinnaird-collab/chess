@@ -21,8 +21,8 @@ public interface MySqlDaoHelper {
             """,
             """ 
             CREATE TABLE IF NOT EXISTS auth (
-              username varchar(256) NOT NULL PRIMARY KEY,
-              authToken varchar(256) NOT NULL
+              username varchar(256) NOT NULL,
+              authToken varchar(256) NOT NULL PRIMARY KEY
              )
             """,
             """

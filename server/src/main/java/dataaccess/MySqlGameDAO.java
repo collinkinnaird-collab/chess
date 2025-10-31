@@ -61,7 +61,7 @@ public class MySqlGameDAO implements GameDAO{
             var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, json FROM game";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                        result.add(readGame(rs));
 
                     }
@@ -70,7 +70,6 @@ public class MySqlGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException("GetGame Error");
         }
-
         return result;
 
     }

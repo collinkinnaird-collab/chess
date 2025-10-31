@@ -53,7 +53,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loginSuccess() throws DataAccessException, AlreadyTakenException {
+    void loginSuccess() throws Exception {
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
         AuthData test = service.register(user);
@@ -64,7 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loginFail() throws DataAccessException{
+    void loginFail() throws Exception {
         UserData user = new UserData("", "flip88", "John.Doe@gmail.com");
 
         service.logIn(user);
@@ -72,7 +72,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void logoutSuccess() throws DataAccessException, AlreadyTakenException {
+    void logoutSuccess() throws Exception {
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
         AuthData test = service.register(user);
@@ -83,7 +83,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void logoutfail() throws DataAccessException, AlreadyTakenException {
+    void logoutfail() throws Exception {
 
         var user = new UserData("John", "Doe240", "John.Doe@gmail.com");
         AuthData test = service.register(user);

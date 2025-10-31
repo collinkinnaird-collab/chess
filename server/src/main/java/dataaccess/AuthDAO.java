@@ -15,7 +15,7 @@ public interface AuthDAO {
 
         void clearTotal() throws DataAccessException;
 
-        AuthData getName(String auth) throws DataAccessException;
+        AuthData getName(String auth) throws Exception;
 
 
         //void clear

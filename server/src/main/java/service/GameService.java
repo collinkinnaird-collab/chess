@@ -19,7 +19,7 @@ public class GameService {
         this.dataAccessAuth = dataAccessAuth;
     }
 
-    public int createGame(String authorization, String gameName) throws DataAccessException{
+    public int createGame(String authorization, String gameName) throws Exception {
 
         AuthData gameCreatorUser = dataAccessAuth.getName(authorization);
 
@@ -29,14 +29,13 @@ public class GameService {
 
     }
 
-    public Collection<GameData> listOfGames(String authToken) throws DataAccessException{
+    public Collection<GameData> listOfGames(String authToken) throws Exception {
         AuthData gameCreatorUser = dataAccessAuth.getName(authToken);
 
         return dataAccessGame.listGames();
     }
 
-    public void joinAGame(String auth, Integer nameId, String color) throws DataAccessException, BadRequestException
-                                                                  , AlreadyTakenException {
+    public void joinAGame(String auth, Integer nameId, String color) throws Exception {
 
         if (color == null){
             throw new BadRequestException("no");

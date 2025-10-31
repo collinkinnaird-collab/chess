@@ -1,6 +1,8 @@
 package service;
 import dataaccess.*;
 import model.*;
+
+import java.util.Objects;
 import java.util.UUID;
 
 //import dataaccess.DataAccess;
@@ -30,13 +32,19 @@ public class UserService {
 
     }
 
-    public AuthData logIn(UserData loginRequest) throws DataAccessException{
+    public AuthData logIn(UserData loginRequest) throws Exception {
 
 
             String authToken = UUID.randomUUID().toString();
             AuthData loginUserAuth = new AuthData(loginRequest.username(), authToken);
 
-            dataAccessUser.getUser(loginRequest);
+            UserData test = dataAccessUser.getUser(loginRequest);
+
+            if(test.username().equals("PPPPPPPPPPPPPPP"))
+            {
+                throw new DataAccessException("bad Password");
+            }
+
 
             dataAccessAuth.newAuth(loginUserAuth);
 
@@ -44,7 +52,7 @@ public class UserService {
 
     }
 
-    public void logout(String logoutRequest) throws DataAccessException{
+    public void logout(String logoutRequest) throws Exception {
 
         Boolean success = false;
         AuthData userAuth = dataAccessAuth.getName(logoutRequest);

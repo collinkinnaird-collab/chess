@@ -88,25 +88,33 @@ public class Server {
         return context.json(body);
     }
 
-    private Object registerUser(Context context) throws DataAccessException, BadRequestException, AlreadyTakenException {
+    private void registerUser(Context context) throws DataAccessException {
 
         UserData registerRequest = new Gson().fromJson(context.body(), UserData.class);
 
         if(registerRequest.username() == null || registerRequest.password() == null)
         {
             context.status(400);
-            return exceptionHandler(new BadRequestException("bad request"), context);
+            exceptionHandler(new BadRequestException("bad request"), context);
+            return;
         }
         try{
             AuthData newAuth = userService.register(registerRequest);
             context.status(200);
-            return context.json(new Gson().toJson(newAuth));
+            context.json(new Gson().toJson(newAuth));
+            return;
         } catch (AlreadyTakenException e) {
             context.status(403);
-            return exceptionHandler(new AlreadyTakenException("already taken"), context);
+            exceptionHandler(new AlreadyTakenException("already taken"), context);
+            return;
+        } catch (Exception f){
+            context.status(500);
+            exceptionHandler(f, context);
+            return;
         }
+
     }
-    private void login(Context context) throws DataAccessException{
+    private void login(Context context) {
 
 
         UserData loginRequest = new Gson().fromJson(context.body(), UserData.class);
@@ -126,6 +134,9 @@ public class Server {
             context.status(401);
             exceptionHandler(new DataAccessException("unauthorized"), context);
             return;
+        } catch (Exception f){
+            context.status(500);
+            exceptionHandler(f, context);
         }
     }
 
@@ -137,47 +148,64 @@ public class Server {
        } catch (DataAccessException e){
            context.status(401);
            exceptionHandler(new DataAccessException("unauthorized"), context);
-        }
+       } catch (Exception f){
+           context.status(500);
+           exceptionHandler(f, context);
+       }
     }
 
-    private Object createGame(Context context) throws DataAccessException{
+    private void createGame(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
 
         try {
             GameData makeGame = new Gson().fromJson(context.body(), GameData.class);
             if(makeGame.gameName() == null){
                 context.status(400);
-                return exceptionHandler(new BadRequestException("bad request"), context);
+                exceptionHandler(new BadRequestException("bad request"), context);
+                return;
             }
             int gameID = gameService.createGame(authHeader, makeGame.gameName());
             context.status(200);
             var body = new Gson().toJson(Map.of("gameID", gameID));
-            return context.json(body);
+            context.json(body);
+            return;
         } catch (DataAccessException e) {
             context.status(401);
-            return exceptionHandler(new DataAccessException("unauthorized"), context);
+            exceptionHandler(new DataAccessException("unauthorized"), context);
+            return;
+        } catch (Exception f){
+
+            context.status(500);
+            exceptionHandler(f, context);
+            return;
         }
 
     }
-    private Object listGames(Context context) throws DataAccessException{
+    private void listGames(Context context) throws DataAccessException{
         String authHeader = context.header("authorization");
 
         try {
             Collection<GameData> newList = gameService.listOfGames(authHeader);
             context.status(200);
             var body = new Gson().toJson(Map.of("games", newList));
-            return context.json(body);
+            context.json(body);
+            return;
         } catch (DataAccessException e) {
             context.status(401);
-            return exceptionHandler(new DataAccessException("unauthorized"), context);
+            exceptionHandler(new DataAccessException("unauthorized"), context);
+            return;
 
+        } catch (Exception f){
+            context.status(500);
+            exceptionHandler(f, context);
+            return;
         }
 
 
 
     }
 
-    private Object joinGame(Context context) throws DataAccessException{
+    private Object joinGame(Context context) {
         String authHeader = context.header("authorization");
         record UpdateGameData(String playerColor, Integer gameID) {}
 
@@ -200,13 +228,21 @@ public class Server {
             context.status(403);
             return exceptionHandler(new AlreadyTakenException("already taken"), context);
 
+        } catch (Exception f){
+            context.status(500);
+            return exceptionHandler(f, context);
+
         }
 
     }
 
-    private void clear(Context context) throws DataAccessException{
-        clearService.clearAll();
-
+    private void clear(Context context) {
+        try {
+            clearService.clearAll();
+        } catch (DataAccessException e){
+            context.status(500);
+            exceptionHandler(e, context);
+        }
     }
 
     public void stop() {

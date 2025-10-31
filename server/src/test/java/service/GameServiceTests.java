@@ -37,7 +37,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void createGame() throws DataAccessException{
+    void createGame() throws Exception {
 
 
 

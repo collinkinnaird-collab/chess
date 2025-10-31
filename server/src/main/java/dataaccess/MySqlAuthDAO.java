@@ -45,9 +45,9 @@ public class MySqlAuthDAO implements AuthDAO{
 
     @Override
     public Boolean deleteAuth(AuthData auth) throws DataAccessException {
-        var statement = "DELETE FROM auth WHERE username=?";
+        var statement = "DELETE FROM auth WHERE authToken=?";
         if(auth != null) {
-            MySqlDaoHelper.executeUpdate(statement, auth.username());
+            MySqlDaoHelper.executeUpdate(statement, auth.authToken());
             return true;
         }
         else{
@@ -62,7 +62,7 @@ public class MySqlAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getName(String auth) throws DataAccessException {
+    public AuthData getName(String auth) throws Exception {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, authToken FROM auth WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -74,7 +74,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("GET NAME ERRROR");
+            throw new Exception("GET NAME ERRROR");
         }
         throw new DataAccessException("does not exist");
     }

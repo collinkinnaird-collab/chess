@@ -11,7 +11,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public interface MySqlDaoHelper {
-     public final String[] createStatements = {
+     public final String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS user (
               username varchar(256) NOT NULL PRIMARY KEY,
@@ -63,7 +63,7 @@ public interface MySqlDaoHelper {
     static void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }

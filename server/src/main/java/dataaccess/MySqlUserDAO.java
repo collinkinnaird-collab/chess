@@ -48,8 +48,6 @@ public class MySqlUserDAO implements UserDAO{
                         return readUser(rs, existingUser.password(), existingUser.email());
                     }
                 }
-            } catch (DataAccessException f){
-                throw new DataAccessException("badPassword");
             }
         } catch (Exception e) {
             throw new Exception();
@@ -65,6 +63,7 @@ public class MySqlUserDAO implements UserDAO{
 
     private UserData readUser(ResultSet result, String userPassword, String email) throws SQLException, DataAccessException {
         String username = result.getNString("username");
+
         if(!verifyUser(result.getNString("password"), userPassword)){
            return new UserData("PPPPPPPPPPPPPPP",null,null);
         }

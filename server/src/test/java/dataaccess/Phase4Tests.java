@@ -143,6 +143,29 @@ public class Phase4Tests {
 
     }
 
+    @Test
+    @DisplayName("create game Positive")
+    @Order(8)
+    public void createGamePositive() {
+
+        TestCreateResult createResult = serverFacade.createGame(new TestCreateRequest("hooray!"), existingAuth);
+
+        assertHttpIsBadRequest(createResult);
+
+    }
+
+    @Test
+    @DisplayName("get game Positive")
+    @Order(9)
+    public void getGamePositive() {
+
+        TestCreateResult createResult = serverFacade.createGame(new TestCreateRequest("hooray!"), existingAuth);
+        TestJoinRequest newJoin = new TestJoinRequest(ChessGame.TeamColor.BLACK, createResult.getGameID());
+
+        assertHttpIsOk(serverFacade.joinPlayer(newJoin, existingAuth));
+
+    }
+
 
     @FunctionalInterface
     private interface TableAction {

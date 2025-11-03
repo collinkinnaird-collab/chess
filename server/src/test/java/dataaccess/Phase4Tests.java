@@ -30,13 +30,14 @@ public class Phase4Tests {
     @BeforeAll
     public static void startServer() {
 
+        myServer = new Server();
         var myPort = myServer.run(0);
         System.out.println("Started test HTTP server on " + myPort);
         serverFacade = new TestServerFacade("localhost", Integer.toString(myPort));
         myExistingUser = new TestUser("EpicUser", "EpicPassword", "EpicEmail@mail.com");
         myNewUser = new TestUser("bigTimeRush", "Cant Stop the Feeling", "sillyGoose@mail.com");
         createRequest = new TestCreateRequest("myTestGame");
-        myServer = new Server();
+
     }
 
     @BeforeEach
@@ -66,7 +67,7 @@ public class Phase4Tests {
 
         TestAuthResult loginResult = serverFacade.register(new TestUser("buddy", "epicPassword", "rew@gmail.com"));
 
-        assertHttpOk(loginResult);
+        assertHttpIsOk(loginResult);
 
         Assertions.assertEquals("buddy", loginResult.getUsername(),
                 "Response did not give the same username as user");
@@ -80,9 +81,9 @@ public class Phase4Tests {
 
         TestAuthResult loginResult = serverFacade.register(new TestUser(null, "sadfaefe", null));
 
-        assertHttpBadRequest(loginResult);
+        assertHttpIsBadRequest(loginResult);
 
-        assertHttpBadRequest(loginResult);
+        assertHttpIsBadRequest(loginResult);
     }
 
     @Test
@@ -91,7 +92,7 @@ public class Phase4Tests {
     public void createGameTestPositive() {
         TestCreateResult createResult = serverFacade.createGame(createRequest, existingAuth);
 
-        assertHttpOk(createResult);
+        assertHttpIsOk(createResult);
 
         Assertions.assertNotNull(createResult.getGameID(), "Result did not return a game ID");
         Assertions.assertTrue(createResult.getGameID() > 0, "Result returned invalid game ID");
@@ -103,24 +104,24 @@ public class Phase4Tests {
         void execute(String tableName, Connection connection) throws SQLException;
     }
 
-    private void assertHttpOk(TestResult result) {
+    private void assertHttpIsOk(TestResult result) {
         Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
-                "Server response code was not 200 OK (message: %s)".formatted(result.getMessage()));
+                "Server response code wasn't 200 OK (message: %s)".formatted(result.getMessage()));
         Assertions.assertFalse(result.getMessage() != null &&
                         result.getMessage().toLowerCase(Locale.ROOT).contains("error"),
-                "Result returned an error message");
+                "Result has returned an error message");
     }
 
-    private void assertHttpBadRequest(TestResult result) {
-        assertHttpError(result, HttpURLConnection.HTTP_BAD_REQUEST, "Bad Request");
+    private void assertHttpIsBadRequest(TestResult result) {
+        assertHttpHasError(result, HttpURLConnection.HTTP_BAD_REQUEST, "Bad Request");
     }
 
-    private void assertHttpError(TestResult result, int statusCode, String message) {
-        Assertions.assertEquals(statusCode, serverFacade.getStatusCode(),
-                "Server response code was not %d %s (message: %s)".formatted(statusCode, message, result.getMessage()));
-        Assertions.assertNotNull(result.getMessage(), "Invalid Request didn't return an error message");
+    private void assertHttpHasError(TestResult result, int statusCodes, String message) {
+        Assertions.assertEquals(statusCodes, serverFacade.getStatusCode(),
+                "Server response code was not %d %s (message: %s)".formatted(statusCodes, message, result.getMessage()));
+        Assertions.assertNotNull(result.getMessage(), "Bad Request didn't return an error message");
         Assertions.assertTrue(result.getMessage().toLowerCase(Locale.ROOT).contains("error"),
-                "Error message didn't contain the word \"Error\"");
+                "Error message did not contain the word \"Error\"");
     }
 
 }

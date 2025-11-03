@@ -159,7 +159,7 @@ public class Server {
 
         try {
             GameData makeGame = new Gson().fromJson(context.body(), GameData.class);
-            if(makeGame.gameName() == null){
+            if(makeGame == null || makeGame.gameName() == null ||makeGame.gameName().isEmpty()){
                 context.status(400);
                 exceptionHandler(new BadRequestException("bad request"), context);
                 return;

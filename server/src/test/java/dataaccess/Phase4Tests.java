@@ -98,6 +98,51 @@ public class Phase4Tests {
         Assertions.assertTrue(createResult.getGameID() > 0, "Result returned invalid game ID");
     }
 
+    @Test
+    @DisplayName("Create game Negative")
+    @Order(4)
+    public void createGameTestNegative() {
+        TestCreateResult createResult = serverFacade.createGame(null, existingAuth);
+
+        assertHttpIsBadRequest(createResult);
+    }
+
+    @Test
+    @DisplayName("get auth positive")
+    @Order(5)
+    public void getAuthToken() {
+
+
+        TestAuthResult authResult = serverFacade.register(myNewUser);
+
+        Assertions.assertNotNull(authResult.getAuthToken());
+    }
+
+    @Test
+    @DisplayName("join game positive")
+    @Order(6)
+    public void joinGamePositive() {
+
+        TestCreateResult createResult = serverFacade.createGame(createRequest, existingAuth);
+
+        TestJoinRequest joinRequest = new TestJoinRequest(ChessGame.TeamColor.WHITE, createResult.getGameID());
+        TestResult joinResult = serverFacade.joinPlayer(joinRequest, existingAuth);
+
+        assertHttpIsOk(joinResult);
+
+    }
+
+    @Test
+    @DisplayName("create game negative")
+    @Order(7)
+    public void joinGameNegative() {
+
+        TestCreateResult createResult = serverFacade.createGame(new TestCreateRequest(""), existingAuth);
+
+        assertHttpIsBadRequest(createResult);
+
+    }
+
 
     @FunctionalInterface
     private interface TableAction {

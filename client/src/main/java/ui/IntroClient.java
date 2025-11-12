@@ -1,0 +1,80 @@
+package ui;
+
+import model.UserData;
+import server.ServerFacade;
+
+import java.util.Arrays;
+
+public class IntroClient {
+
+
+    private final ServerFacade server;
+
+
+    public IntroClient(String servrURL){
+        server = new ServerFacade(servrURL);
+    }
+
+
+    public String eval(String line) throws Exception {
+        try {
+            String[] tokens = line.toLowerCase().split("");
+            String command = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (command){
+                case "1" -> register(params);
+                case "2" -> login(params);
+                case "3" -> "quit";
+                case "4" -> help();
+                default -> help();
+            };
+        } catch (Exception e){
+            throw new Exception("DO LATER");
+        }
+    }
+
+    public String register(String... params) throws Exception {
+        if(params.length > 2){
+            String userName = params[0];
+            String password = params[1];
+            String email = params[2];
+
+            UserData newUser = new UserData(userName, password, email);
+
+            server.register(newUser);
+
+            return String.format("you are register as %s.", userName);
+
+        }
+        throw new Exception("incorrect parameters");
+
+    }
+
+    public String login(String... params) throws Exception {
+        if(params.length > 1){
+            String userName = params[0];
+            String password = params[1];
+
+            UserData newuser = new UserData(userName, password, null);
+
+            server.login(newuser);
+
+            return String.format("you are logged in as %s", userName);
+        }
+
+        throw new Exception("bad input");
+    }
+
+    public String help(){
+        return """
+                1. Register
+                2. Login
+                3. Quit
+                4. help
+                """;
+    }
+
+
+
+
+}

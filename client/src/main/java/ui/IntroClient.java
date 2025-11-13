@@ -1,5 +1,6 @@
 package ui;
 
+import model.AuthData;
 import model.UserData;
 import server.ServerFacade;
 
@@ -9,6 +10,7 @@ public class IntroClient {
 
 
     private final ServerFacade server;
+    private AuthData userAuth;
 
 
     public IntroClient(String servrURL){
@@ -18,7 +20,7 @@ public class IntroClient {
 
     public String eval(String line) throws Exception {
         try {
-            String[] tokens = line.toLowerCase().split("");
+            String[] tokens = line.toLowerCase().split(" ");
             String command = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (command){
@@ -41,7 +43,8 @@ public class IntroClient {
 
             UserData newUser = new UserData(userName, password, email);
 
-            server.register(newUser);
+            AuthData newAuth = server.register(newUser);
+            userAuth = newAuth;
 
             return String.format("you are register as %s.", userName);
 
@@ -55,14 +58,19 @@ public class IntroClient {
             String userName = params[0];
             String password = params[1];
 
-            UserData newuser = new UserData(userName, password, null);
+            UserData newUser = new UserData(userName, password, null);
 
-            server.login(newuser);
+            AuthData newAuth = server.login(newUser);
+            userAuth = newAuth;
 
             return String.format("you are logged in as %s", userName);
         }
 
         throw new Exception("bad input");
+    }
+
+    public AuthData getAuthData(){
+        return userAuth;
     }
 
     public String help(){

@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 
@@ -22,49 +23,50 @@ public class ServerFacade {
         serverURL = url;
     }
 
-    public void register(UserData user) throws Exception {
+    public AuthData register(UserData user) throws Exception {
         var path = "/user";
-        this.makeRequest("POST", path, user, UserData.class);
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
-    public void login(UserData user) throws Exception {
+    public AuthData login(UserData user) throws Exception {
         var path = "/session";
-        this.makeRequest("POST", path, user, UserData.class);
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public void logout() throws Exception{
         var path = "/session";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
-    public void createGame(String game) throws Exception {
+    public void createGame(String game, AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("POST", path, game, GameData.class);
+        this.makeRequest("POST", path, game, GameData.class, userAuth);
     }
 
-    public void listGames() throws Exception {
+    public void listGames(AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("GET", path, null, GameData.class);
+        this.makeRequest("GET", path, null, GameData.class, userAuth);
     }
 
-    public void playGame(Object game) throws Exception {
+    public void playGame(Object game, AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("PUT", path, game, GameData.class);
+        this.makeRequest("PUT", path, game, GameData.class, userAuth);
     }
 
-    public void observeGame(Object id) throws Exception {
+    public void observeGame(Object id, AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("GET", path, id, GameData.class);
+        this.makeRequest("GET", path, id, GameData.class, userAuth);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData userAuth) throws Exception {
         try {
             URL url = (new URI( serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
+
+            writeBody(request, http, userAuth);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -74,8 +76,11 @@ public class ServerFacade {
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static void writeBody(Object request, HttpURLConnection http, AuthData userAuth) throws IOException {
         if (request != null){
+            if(userAuth != null){
+                http.addRequestProperty("authorization", userAuth.authToken());
+            }
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()){
@@ -93,7 +98,7 @@ public class ServerFacade {
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException{
         T response = null;
-        if (http.getContentLength() < 0) {
+        if (http.getContentLength() > 0) {
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if(responseClass != null){

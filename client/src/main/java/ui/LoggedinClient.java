@@ -1,6 +1,6 @@
 package ui;
 
-import model.GameData;
+import model.AuthData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -14,16 +14,16 @@ public class LoggedinClient {
         server = new ServerFacade(serverURL);
     }
 
-    public String eval(String resp) throws Exception{
+    public String eval(String resp, AuthData userAuth) throws Exception{
         try {
-            String[] tokens = resp.toLowerCase().split("");
+            String[] tokens = resp.toLowerCase().split(" ");
             String command = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (command){
-                case "1" -> createGame(params);
-                case "2" -> listGames();
-                case "3" -> playGame(params);
-                case "4" -> observeGame(params);
+                case "1" -> createGame(userAuth, params);
+                case "2" -> listGames(userAuth);
+                case "3" -> playGame(userAuth, params);
+                case "4" -> observeGame(userAuth, params);
                 case "5" -> logout();
                 case "6" -> help();
                 default -> help();
@@ -33,23 +33,23 @@ public class LoggedinClient {
         }
     }
 
-    public String createGame(String... params) throws Exception {
-        if(params.length > 1){
+    public String createGame(AuthData userAuth, String... params) throws Exception {
+        if(params.length > 0){
             String gameName = params[0];
 
-            server.createGame(gameName);
+            server.createGame(gameName, userAuth);
             return ( gameName + " has successfully been created!");
 
         }
         throw new Exception("incorrect parameters");
     }
 
-    public String listGames() throws Exception {
-        server.listGames();
+    public String listGames(AuthData userAuth) throws Exception {
+        server.listGames(userAuth);
         return( "\n"+"Here is the list!");
     }
 
-    public String playGame(String... params) throws Exception {
+    public String playGame(AuthData userAuth, String... params) throws Exception {
         if(params.length > 2) {
             Integer id = Integer.parseInt(params[0]);
             String playerColor = params[1];
@@ -58,7 +58,7 @@ public class LoggedinClient {
 
             UpdateGameData newGame = new UpdateGameData(playerColor, id);
 
-            server.playGame(newGame);
+            server.playGame(newGame, userAuth);
 
             return ("you are now the " + playerColor + "of game" + id);
 
@@ -66,11 +66,11 @@ public class LoggedinClient {
         throw new Exception("incorrect parameters");
     }
 
-    public String observeGame(String... params) throws Exception {
+    public String observeGame(AuthData userAuth, String... params) throws Exception {
         if(params.length > 1){
             Integer id = Integer.parseInt(params[0]);
 
-            server.observeGame(id);
+            server.observeGame(id, userAuth);
 
             return ("you are now observing game " + id);
         }

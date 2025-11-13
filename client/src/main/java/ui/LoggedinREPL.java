@@ -1,13 +1,17 @@
 package ui;
 
+import model.AuthData;
+
 import java.util.Scanner;
 
 public class LoggedinREPL {
 
     private final LoggedinClient client;
+    private final AuthData myAuth;
 
-    public LoggedinREPL(LoggedinClient loggedClient) throws Exception{
+    public LoggedinREPL(LoggedinClient loggedClient, AuthData userAuth) throws Exception{
         client = loggedClient;
+        myAuth = userAuth;
     }
 
     public void run (){
@@ -22,7 +26,7 @@ public class LoggedinREPL {
             String line = scanner.nextLine();
 
             try{
-                result = client.eval(line);
+                result = client.eval(line, myAuth);
                 System.out.print(result);
             } catch (Exception e){
                 throw new RuntimeException();

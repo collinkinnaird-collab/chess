@@ -1,5 +1,7 @@
 package ui;
 
+import model.AuthData;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -13,7 +15,7 @@ public class IntroREPL {
     }
 
     public void run (){
-        System.out.println("Welcome to chess! Sign in to start ");
+        System.out.println("Welcome to chess! register or login to start ");
         System.out.print(beginningClient.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -28,7 +30,7 @@ public class IntroREPL {
                 System.out.print(result);
                 String firstWord = result.split(" ")[0];
                 if(firstWord.equals("you")){
-                    new LoggedinREPL(secondClient).run();
+                    new LoggedinREPL(secondClient, beginningClient.getAuthData()).run();
                 }
             } catch (Exception e){
                 throw new RuntimeException();

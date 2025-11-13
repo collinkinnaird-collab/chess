@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.GameData;
 import model.UserData;
 
 import java.io.IOException;
@@ -29,6 +30,31 @@ public class ServerFacade {
     public void login(UserData user) throws Exception {
         var path = "/session";
         this.makeRequest("POST", path, user, UserData.class);
+    }
+
+    public void logout() throws Exception{
+        var path = "/session";
+        this.makeRequest("DELETE", path, null, null);
+    }
+
+    public void createGame(String game) throws Exception {
+        var path = "/game";
+        this.makeRequest("POST", path, game, GameData.class);
+    }
+
+    public void listGames() throws Exception {
+        var path = "/game";
+        this.makeRequest("GET", path, null, GameData.class);
+    }
+
+    public void playGame(Object game) throws Exception {
+        var path = "/game";
+        this.makeRequest("PUT", path, game, GameData.class);
+    }
+
+    public void observeGame(Object id) throws Exception {
+        var path = "/game";
+        this.makeRequest("GET", path, id, GameData.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {

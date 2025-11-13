@@ -32,4 +32,8 @@ public class LoggedinREPL {
 
 
     }
+
+    public void printPrompt(){
+        System.out.print("\n" + "input: ");
+    }
 }

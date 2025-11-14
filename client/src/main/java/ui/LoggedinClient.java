@@ -14,12 +14,10 @@ import java.util.List;
 public class LoggedinClient {
 
     private final ServerFacade server;
-    private final GameClient gameTime;
 
 
     public LoggedinClient(String serverURL){
         server = new ServerFacade(serverURL);
-        gameTime = new GameClient(serverURL);
     }
 
     public String eval(String resp, AuthData userAuth) throws Exception{
@@ -62,7 +60,7 @@ public class LoggedinClient {
         }
 
 
-        return("\n"+"Here is the list!");
+        return String.format("\n"+" Here is the list! ");
     }
 
     public String playGame(AuthData userAuth, String... params) throws Exception {

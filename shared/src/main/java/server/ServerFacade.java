@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
+import model.ListOfGames;
 import model.UserData;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
+import java.util.Collection;
 
 public class ServerFacade {
     private final HttpClient client= HttpClient.newHttpClient();
@@ -40,12 +41,12 @@ public class ServerFacade {
 
     public void createGame(String game, AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("POST", path, game, GameData.class, userAuth);
+        this.makeRequest("POST", path, new GameData(0, null, null, game, null), GameData.class, userAuth);
     }
 
-    public void listGames(AuthData userAuth) throws Exception {
+    public ListOfGames listGames(AuthData userAuth) throws Exception {
         var path = "/game";
-        this.makeRequest("GET", path, null, GameData.class, userAuth);
+        return this.makeRequest("GET", path, null, ListOfGames.class, userAuth);
     }
 
     public void playGame(Object game, AuthData userAuth) throws Exception {
@@ -86,7 +87,11 @@ public class ServerFacade {
             try (OutputStream reqBody = http.getOutputStream()){
                 reqBody.write(reqData.getBytes());
             }
+            return;
+        } else if (userAuth != null){
+            http.addRequestProperty("authorization", userAuth.authToken());
         }
+
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws Exception {

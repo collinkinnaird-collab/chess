@@ -56,7 +56,7 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        var result = new ListOfGames();
+        Collection<GameData> result = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameId, whiteUsername, blackUsername, gameName, json FROM game";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -70,6 +70,7 @@ public class MySqlGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException("GetGame Error");
         }
+        //ListOfGames bro = new ListOfGames(result);
         return result;
 
     }

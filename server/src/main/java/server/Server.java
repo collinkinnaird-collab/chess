@@ -185,6 +185,7 @@ public class Server {
         String authHeader = context.header("authorization");
 
         try {
+
             Collection<GameData> newList = gameService.listOfGames(authHeader);
             context.status(200);
             var body = new Gson().toJson(Map.of("games", newList));

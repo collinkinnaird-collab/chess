@@ -1,9 +1,14 @@
 package ui;
 
 import model.AuthData;
+import model.GameData;
+import model.ListOfGames;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCase;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class LoggedinClient {
 
@@ -45,14 +50,17 @@ public class LoggedinClient {
     }
 
     public String listGames(AuthData userAuth) throws Exception {
-        server.listGames(userAuth);
-        return( "\n"+"Here is the list!");
+
+        ListOfGames allGames = server.listGames(userAuth);
+        String[] names = allGames.games().stream().toString().split(" ");
+
+        return(  allGames + "\n"+"Here is the list!");
     }
 
     public String playGame(AuthData userAuth, String... params) throws Exception {
-        if(params.length > 2) {
+        if(params.length > 1) {
             Integer id = Integer.parseInt(params[0]);
-            String playerColor = params[1];
+            String playerColor = params[1].toUpperCase();
 
             record UpdateGameData(String playerColor, Integer gameID) {}
 
@@ -60,7 +68,7 @@ public class LoggedinClient {
 
             server.playGame(newGame, userAuth);
 
-            return ("you are now the " + playerColor + "of game" + id);
+            return ("You are now the " + playerColor + " of game " + id);
 
         }
         throw new Exception("incorrect parameters");

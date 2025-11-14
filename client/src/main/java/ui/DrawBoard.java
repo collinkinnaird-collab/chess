@@ -39,7 +39,7 @@ public class DrawBoard {
                     String squareColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY;
                     chessBoard.append(squareColor);
 
-                    chessBoard.append(Pieces(j, i, !isBlack));
+                    chessBoard.append(pieces(j, i, !isBlack));
 
 
                     chessBoard.append(RESET_BG_COLOR);
@@ -69,7 +69,7 @@ public class DrawBoard {
                     String squareColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY;
                     chessBoard.append(squareColor);
 
-                    chessBoard.append(Pieces(j, i, isBlack));
+                    chessBoard.append(pieces(j, i, isBlack));
 
 
                     chessBoard.append(RESET_BG_COLOR);
@@ -97,7 +97,7 @@ public class DrawBoard {
         chessBoard.append(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_BOLD_FAINT);
     }
 
-    public String Pieces(int num, int outerNum, boolean isBlack){
+    public String pieces(int num, int outerNum, boolean isBlack){
         if((outerNum == 0 || outerNum == 7) && isBlack) {
             return switch (num) {
                 case 1 -> BLACK_ROOK;

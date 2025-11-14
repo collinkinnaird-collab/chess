@@ -13,8 +13,8 @@ public class IntroClient {
     private AuthData userAuth;
 
 
-    public IntroClient(String servrURL){
-        server = new ServerFacade(servrURL);
+    public IntroClient(String serverURL){
+        server = new ServerFacade(serverURL);
     }
 
 

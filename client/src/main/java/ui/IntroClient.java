@@ -61,8 +61,7 @@ public class IntroClient {
 
             UserData newUser = new UserData(userName, password, null);
 
-            AuthData newAuth = server.login(newUser);
-            userAuth = newAuth;
+            userAuth = server.login(newUser);
 
             return String.format("you are logged in as %s", userName);
         }

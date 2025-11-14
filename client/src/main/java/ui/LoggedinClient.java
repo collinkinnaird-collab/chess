@@ -32,7 +32,7 @@ public class LoggedinClient {
                 default -> help();
             };
         } catch (Exception e){
-            throw new Exception("incorrect parameters");
+            throw new Exception("incorrect parameters ");
         }
 
     }

@@ -36,6 +36,7 @@ public class LoggedinClient {
         } catch (Exception e){
             throw new Exception("DO LATER");
         }
+
     }
 
     public String createGame(AuthData userAuth, String... params) throws Exception {

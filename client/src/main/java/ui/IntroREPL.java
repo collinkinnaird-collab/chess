@@ -8,10 +8,12 @@ import java.util.Scanner;
 public class IntroREPL {
     private final IntroClient beginningClient;
     private final LoggedinClient secondClient;
+    private final String serveString;
 
     public IntroREPL(String server) throws Exception{
         beginningClient = new IntroClient(server);
         secondClient = new LoggedinClient(server);
+        serveString = server;
     }
 
     public void run (){
@@ -30,10 +32,12 @@ public class IntroREPL {
                 System.out.print(result);
                 String firstWord = result.split(" ")[0];
                 if(firstWord.equals("you")){
-                    new LoggedinREPL(secondClient, beginningClient.getAuthData()).run();
+                    new LoggedinREPL(secondClient, serveString, beginningClient.getAuthData()).run();
+                    System.out.println( "\n" + beginningClient.help());
                 }
             } catch (Exception e){
-                throw new RuntimeException();
+                System.out.println("error: " + e.getMessage());
+                printPrompt();
             }
 
         }

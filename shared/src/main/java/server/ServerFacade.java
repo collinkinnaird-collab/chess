@@ -34,9 +34,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
-    public void logout() throws Exception{
+    public void logout(AuthData userAuth) throws Exception{
         var path = "/session";
-        this.makeRequest("DELETE", path, null, null, null);
+        this.makeRequest("DELETE", path, null, null, userAuth);
     }
 
     public void createGame(String game, AuthData userAuth) throws Exception {
@@ -54,9 +54,9 @@ public class ServerFacade {
         this.makeRequest("PUT", path, game, GameData.class, userAuth);
     }
 
-    public void observeGame(Object id, AuthData userAuth) throws Exception {
+    public void observeGame(AuthData userAuth, int id) throws Exception {
         var path = "/game";
-        this.makeRequest("GET", path, id, GameData.class, userAuth);
+        this.makeRequest("GET", path, new GameData(id, null, null, null, null), GameData.class, userAuth);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData userAuth) throws Exception {

@@ -31,12 +31,13 @@ public class IntroClient {
                 default -> help();
             };
         } catch (Exception e){
-            throw new Exception("DO LATER");
+            throw new Exception("incorrect parameters");
         }
     }
 
     public String register(String... params) throws Exception {
-        if(params.length > 2){
+
+        if(params.length == 3){
             String userName = params[0];
             String password = params[1];
             String email = params[2];
@@ -54,7 +55,7 @@ public class IntroClient {
     }
 
     public String login(String... params) throws Exception {
-        if(params.length > 1){
+        if(params.length == 2){
             String userName = params[0];
             String password = params[1];
 
@@ -75,8 +76,8 @@ public class IntroClient {
 
     public String help(){
         return """
-                1. Register
-                2. Login
+                1. Register (username, password, email)
+                2. Login (username, password)
                 3. Quit
                 4. help
                 """;

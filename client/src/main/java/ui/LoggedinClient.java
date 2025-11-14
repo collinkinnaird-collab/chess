@@ -3,13 +3,10 @@ package ui;
 import model.AuthData;
 import model.GameData;
 import model.ListOfGames;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCase;
 import server.ServerFacade;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+
 
 public class LoggedinClient {
 

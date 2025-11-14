@@ -69,6 +69,9 @@ public class LoggedinClient {
 
             server.playGame(newGame, userAuth);
 
+            DrawBoard chessBoard = new DrawBoard();
+            chessBoard.freshBoard(playerColor);
+
             return ("You are now the " + playerColor + " of game " + id);
 
         }

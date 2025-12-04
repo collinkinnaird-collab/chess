@@ -25,9 +25,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case MAKE_MOVE ->
-                case LEAVE ->
-                case RESIGN ->
+                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                case LEAVE -> LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                case RESIGN -> Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -42,6 +42,30 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void JoinGame(int gameId, String auth, Session session, String username) throws IOException {
         connections.add(gameId, session);
         var message = String.format( "%s has joined the Game!", username);
+        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
+        connections.broadcast(session, ServerMessage, message);
+
+    }
+
+    public void PlayTurn(int gameId, String auth, Session session, String username) throws IOException {
+        connections.add(gameId, session);
+        var message = String.format( "%s has joined the Game!", username);
+        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
+        connections.broadcast(session, ServerMessage, message);
+
+    }
+
+    public void LeaveGame(int gameId, String auth, Session session, String username) throws IOException {
+        connections.add(gameId, session);
+        var message = String.format( "%s has left the Game!", username);
+        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
+        connections.broadcast(session, ServerMessage, message);
+
+    }
+
+    public void Resign(int gameId, String auth, Session session, String username) throws IOException {
+        connections.add(gameId, session);
+        var message = String.format( "%s has given up!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(session, ServerMessage, message);
 

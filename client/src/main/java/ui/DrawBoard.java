@@ -5,7 +5,6 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
 
-    int column = 0;
     StringBuilder chessBoard = new StringBuilder();
 
 

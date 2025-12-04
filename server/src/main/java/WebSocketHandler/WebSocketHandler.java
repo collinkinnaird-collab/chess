@@ -27,7 +27,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName(), command);
+                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case LEAVE -> LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case RESIGN -> Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
             }
@@ -49,10 +49,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void PlayTurn(int gameId, String auth, Session session, String username, UserGameCommand command) throws IOException {
+    public void PlayTurn(int gameId, String auth, Session session, String username) throws IOException {
         connections.add(gameId, session);
         var message = String.format( "%s's turn!", username);
-       // MakeMoveCommand move_Set = new Gson().fromJson(MakeMoveCommand.class);
+        //MakeMoveCommand move_Set = new Gson().fromJson(MakeMoveCommand.class);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(session, ServerMessage, message, gameId);
 

@@ -33,7 +33,7 @@ public class LoggedinREPL {
                 System.out.print(result);
                 String firstWord = result.split(" ")[0];
                 if(firstWord.equals("Entered")){
-                    new GameRepl(gameTime).run();
+                    new GameRepl(gameTime, myAuth).run();
                     System.out.println( "\n" + client.help());
                 }
             } catch (Exception e){

@@ -1,20 +1,25 @@
 package ui;
 
+import WebSocket.NotificationHandler;
+import WebSocket.WebSocketFacade;
 import model.AuthData;
 import model.GameData;
 import model.ListOfGames;
 import server.ServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 
 
-public class LoggedinClient {
+public class LoggedinClient implements NotificationHandler {
 
     private final ServerFacade server;
+    private final WebSocketFacade ws;
 
 
-    public LoggedinClient(String serverURL){
+    public LoggedinClient(String serverURL) throws Exception {
         server = new ServerFacade(serverURL);
+        ws = new WebSocketFacade(serverURL, this);
     }
 
     public String eval(String resp, AuthData userAuth) throws Exception{
@@ -110,6 +115,8 @@ public class LoggedinClient {
     }
 
 
-
-
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        System.out.println(serverMessage.getServerMessageType());
+    }
 }

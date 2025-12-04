@@ -1,6 +1,7 @@
 package WebSocket;
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void EnterGame(String username, String authToken, GameData game) throws Exception {
         try{
-            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.gameID(), username);
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.gameID(), username, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e){
             throw new Exception(e);
@@ -55,16 +56,25 @@ public class WebSocketFacade extends Endpoint {
 
     public void ExitGame(String username, String authToken, GameData game) throws Exception {
         try{
-            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.gameID(), username);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, game.gameID(), username, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e){
             throw new Exception(e);
         }
     }
 
-    public void LooseGame(String username, String authToken, GameData game) throws Exception {
+    public void LoseGame(String username, String authToken, GameData game) throws Exception {
         try{
-            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.gameID(), username);
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, game.gameID(), username, null);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    public void MakeMove(String username, String authToken, GameData game, ChessMove move) throws Exception {
+        try{
+            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, game.gameID(), username, move);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e){
             throw new Exception(e);

@@ -6,9 +6,11 @@ import java.util.Scanner;
 
 public class GameRepl {
     private final GameClient client;
+    private final AuthData userAuth;
 
-    public GameRepl(GameClient gameClient) throws Exception{
+    public GameRepl(GameClient gameClient, AuthData myAuth) throws Exception{
         client = gameClient;
+        userAuth = myAuth;
     }
 
     public void run () {
@@ -22,7 +24,7 @@ public class GameRepl {
             printPrompt();
             String line = scanner.nextLine();
             try{
-                result = client.eval(line);
+                result = client.eval(line, userAuth);
                 System.out.print(result);
             } catch (Exception e){
                 System.out.println("error: " + e.getMessage());

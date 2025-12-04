@@ -66,7 +66,12 @@ public class Server {
                 .get("/game", this::listGames)
                 .put("/game", this::joinGame)
                 .delete("/db", this::clear)
-                .exception(Exception.class, this::exceptionHandler);
+                .exception(Exception.class, this::exceptionHandler)
+                .ws("/ws", wsConfig -> {
+                    wsConfig.onConnect(webSocketHandler);
+                    wsConfig.onMessage(webSocketHandler);
+                    wsConfig.onClose(webSocketHandler);
+                });
 
 
 

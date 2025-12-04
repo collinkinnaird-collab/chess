@@ -17,7 +17,11 @@ public class ConnectionManager {
     }
 
     public void remove(Integer gameId, Session session){
-        connections.remove(gameId, session);
+        List<Session> sessions = connections.get(gameId);
+
+        if(sessions != null ) {
+            sessions.remove(session);
+        }
     }
 
     public void broadcast(Session excludeSession, ServerMessage message, String printable, Integer gameId) throws IOException {

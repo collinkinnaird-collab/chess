@@ -43,7 +43,7 @@ public class GameClient implements NotificationHandler{
                 case "2" -> RedrawChessBoard();
                 case "3" -> MakeMove(userAuth, params);
                 case "4" -> Resign(userAuth);
-                case "5" -> HighlightLegalMoves(params);
+                case "5" -> HighlightLegalMoves(userAuth, params);
                 case "6" -> help();
                 default -> help();
             };
@@ -92,14 +92,36 @@ public class GameClient implements NotificationHandler{
 
     }
 
-    public String Resign (AuthData userAuth){
+    public String Resign (AuthData userAuth) throws Exception {
 
-        return "Success";
+        ListOfGames personalGameList = server.listGames(userAuth);
+
+        for (GameData games : personalGameList.games()) {
+            if (games.blackUsername().equals(userAuth.username())) {
+
+                return (games.blackUsername() + " gave up ... " + games.whiteUsername() + " wins! ");
+
+            } else if (games.whiteUsername().equals(userAuth.username())) {
+                return (games.whiteUsername() + " gave up ... " + games.blackUsername() + " wins! ");
+            }
+
+        }
+        return null;
     }
 
-    public String HighlightLegalMoves(String ... params){
+    public String HighlightLegalMoves(AuthData userAuth, String ... params) throws Exception {
         if(params.length > 1){
+            ListOfGames personalGameList = server.listGames(userAuth);
+            ChessPosition start = new ChessPosition(Integer.parseInt(params[0]), Integer.parseInt(params[1]));
 
+            for (GameData games : personalGameList.games()){
+                if (games.blackUsername().equals(userAuth.username()) || games.whiteUsername().equals(userAuth.username())) {
+                    for (ChessMove playableMoves: games.game().validMoves(start)) {
+
+                    }
+                }
+
+            }
         }
         return "Success";
     }

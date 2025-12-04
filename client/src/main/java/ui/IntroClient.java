@@ -3,18 +3,24 @@ package ui;
 import model.AuthData;
 import model.UserData;
 import server.ServerFacade;
+import WebSocket.WebSocketFacade;
+import WebSocket.NotificationHandler;
+import websocket.messages.ServerMessage;
 
+import java.net.http.WebSocket;
 import java.util.Arrays;
 
-public class IntroClient {
+public class IntroClient implements NotificationHandler {
 
 
     private final ServerFacade server;
+    private final WebSocketFacade ws;
     private AuthData userAuth;
 
 
-    public IntroClient(String serverURL){
+    public IntroClient(String serverURL) throws Exception {
         server = new ServerFacade(serverURL);
+        ws = new WebSocketFacade(serverURL, this);
     }
 
 
@@ -83,6 +89,8 @@ public class IntroClient {
     }
 
 
+    @Override
+    public void notify(ServerMessage serverMessage) {
 
-
+    }
 }

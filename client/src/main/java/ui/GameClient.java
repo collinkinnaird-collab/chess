@@ -28,7 +28,11 @@ public class GameClient implements NotificationHandler{
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (command){
                 case "1" -> "quit";
-                case "2" -> help();
+                case "2" -> RedrawChessBoard();
+                case "3" -> MakeMove(params);
+                case "4" -> Resign();
+                case "5" -> HighlightLegalMoves(params);
+                case "6" -> help();
                 default -> help();
             };
         } catch (Exception e){
@@ -36,10 +40,34 @@ public class GameClient implements NotificationHandler{
         }
     }
 
+    public String RedrawChessBoard(){
+
+        return "Success";
+    }
+
+    public String MakeMove(String ... params){
+
+        return "Success";
+    }
+
+    public String Resign (){
+
+        return "Success";
+    }
+
+    public String HighlightLegalMoves(String ... params){
+
+        return "Success";
+    }
+
     public String help(){
         return("""
                 1. quit
-                2. help
+                2. Redraw chessboard
+                3. Make a move (start position of piece, desired end position of piece)
+                4. give up
+                5. highlight legal moves (type position of piece)
+                6. help
                 """);
     }
 

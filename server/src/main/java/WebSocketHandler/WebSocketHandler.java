@@ -52,7 +52,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void PlayTurn(int gameId, String auth, Session session, String username, UserGameCommand command) throws IOException {
         connections.add(gameId, session);
         var message = String.format( "%s's turn!", username);
-        MakeMoveCommand move_Set = new Gson().fromJson(MakeMoveCommand.class);
+       // MakeMoveCommand move_Set = new Gson().fromJson(MakeMoveCommand.class);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(session, ServerMessage, message, gameId);
 

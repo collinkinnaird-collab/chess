@@ -43,15 +43,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.add(gameId, session);
         var message = String.format( "%s has joined the Game!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, message);
+        connections.broadcast(session, ServerMessage, message, gameId);
 
     }
 
     public void PlayTurn(int gameId, String auth, Session session, String username) throws IOException {
         connections.add(gameId, session);
-        var message = String.format( "%s has joined the Game!", username);
+        var message = String.format( "%s's turn!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, message);
+        connections.broadcast(session, ServerMessage, message, gameId);
 
     }
 
@@ -59,7 +59,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.add(gameId, session);
         var message = String.format( "%s has left the Game!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, message);
+        connections.broadcast(session, ServerMessage, message, gameId);
 
     }
 
@@ -67,7 +67,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.add(gameId, session);
         var message = String.format( "%s has given up!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, message);
+        connections.broadcast(session, ServerMessage, message, gameId);
 
     }
 

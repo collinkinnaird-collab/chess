@@ -216,7 +216,6 @@ public class Server {
         try{
             gameService.joinAGame(authHeader, updatedGame.gameID(), updatedGame.playerColor());
             context.status(200);
-
             return("{}");
 //            var body = new Gson().toJson("{}");
 //            return context.json(body);

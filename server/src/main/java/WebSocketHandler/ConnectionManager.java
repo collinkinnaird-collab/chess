@@ -5,22 +5,26 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap <Integer, Session> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap <Integer, List<Session>> connections = new ConcurrentHashMap<>();
 
     public void add(Integer gameId, Session session){
-        connections.put(gameId, session);
+        connections.computeIfAbsent(gameId, id -> new CopyOnWriteArrayList<>()).add(session);
     }
 
     public void remove(Integer gameId, Session session){
         connections.remove(gameId, session);
     }
 
-    public void broadcast(Session excludeSession, ServerMessage message, String printable) throws IOException {
+    public void broadcast(Session excludeSession, ServerMessage message, String printable, Integer gameId) throws IOException {
+
+        List<Session> session = connections.get(gameId);
         String msg = message.toString();
-        for (Session c : connections.values()) {
+        for (Session c : session) {
             if (c.isOpen()) {
                 if (!c.equals(excludeSession)) {
                     c.getRemote().sendString(msg);

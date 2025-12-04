@@ -92,14 +92,6 @@ public class DrawBoard {
 
     public String pieces(int num, int outerNum, boolean isBlack, boolean flipQueen){
         if((outerNum == 0 || outerNum == 7) && isBlack) {
-            if (flipQueen){
-                int king = 5;
-                int queen = 4;
-            }
-            else {
-                int king = 4;
-                int queen = 5;
-            }
             return switch (num) {
                 case 1 -> BLACK_ROOK;
                 case 2 -> BLACK_KNIGHT;

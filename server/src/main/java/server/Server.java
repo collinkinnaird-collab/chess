@@ -1,6 +1,7 @@
 package server;
 
 
+import WebSocketHandler.WebSocketHandler;
 import dataaccess.*;
 import service.ClearService;
 import service.GameService;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
+    private final WebSocketHandler webSocketHandler;
     UserDAO dataAccessUser;
 
     {
@@ -53,7 +55,7 @@ public class Server {
 
     public Server() {
 
-
+        this.webSocketHandler = new WebSocketHandler();
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -65,7 +67,6 @@ public class Server {
                 .put("/game", this::joinGame)
                 .delete("/db", this::clear)
                 .exception(Exception.class, this::exceptionHandler);
-
 
 
 

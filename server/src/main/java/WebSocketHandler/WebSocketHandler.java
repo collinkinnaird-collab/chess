@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.UserGameCommand;
+import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
-                case CONNECT ->
+                case CONNECT -> joinGame(command.getGameID(), command.getAuthToken(), ctx.session);
                 case MAKE_MOVE ->
                 case LEAVE ->
                 case RESIGN ->
@@ -35,6 +36,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleClose(WsCloseContext ctx) {
         System.out.println("Websocket closed");
+    }
+
+    public void joinGame(int gameId, String auth, Session session){
+
     }
 
 }

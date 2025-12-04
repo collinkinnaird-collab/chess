@@ -1,9 +1,14 @@
 package WebSocket;
+import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import model.GameData;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 public class WebSocketFacade extends Endpoint {
@@ -38,4 +43,14 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
 
     }
+
+    public void EnterGame(String username, String authToken, GameData game) throws Exception {
+        try{
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.gameID() );
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
 }

@@ -3,24 +3,17 @@ package ui;
 import model.AuthData;
 import model.UserData;
 import server.ServerFacade;
-import WebSocket.WebSocketFacade;
-import WebSocket.NotificationHandler;
-import websocket.messages.ServerMessage;
-
-import java.net.http.WebSocket;
 import java.util.Arrays;
 
-public class IntroClient implements NotificationHandler {
+public class IntroClient {
 
 
     private final ServerFacade server;
-    private final WebSocketFacade ws;
     private AuthData userAuth;
 
 
     public IntroClient(String serverURL) throws Exception {
         server = new ServerFacade(serverURL);
-        ws = new WebSocketFacade(serverURL, this);
     }
 
 
@@ -52,6 +45,7 @@ public class IntroClient implements NotificationHandler {
 
             AuthData newAuth = server.register(newUser);
             userAuth = newAuth;
+
 
             return String.format("you are register as %s.", userName);
 
@@ -86,11 +80,5 @@ public class IntroClient implements NotificationHandler {
                 3. Quit
                 4. help
                 """;
-    }
-
-
-    @Override
-    public void notify(ServerMessage serverMessage) {
-
     }
 }

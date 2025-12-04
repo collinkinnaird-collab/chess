@@ -16,7 +16,7 @@ public class LoggedinREPL {
         nextString = serverString;
     }
 
-    public void run (){
+    public void run () throws Exception {
         System.out.println("! What would you like to do today? ");
         System.out.print(client.help());
 

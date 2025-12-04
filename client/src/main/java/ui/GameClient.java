@@ -2,15 +2,23 @@ package ui;
 
 import server.ServerFacade;
 
+import WebSocket.WebSocketFacade;
+import WebSocket.NotificationHandler;
+import websocket.messages.ServerMessage;
+
+import java.net.http.WebSocket;
+
 import java.util.Arrays;
 
-public class GameClient {
+public class GameClient implements NotificationHandler{
 
     private final ServerFacade server;
+    private final WebSocketFacade ws;
 
 
-    public GameClient(String serverURL){
+    public GameClient(String serverURL) throws Exception {
         server = new ServerFacade(serverURL);
+        ws = new WebSocketFacade(serverURL, this);
     }
 
     public String eval(String resp) throws Exception {
@@ -35,4 +43,8 @@ public class GameClient {
                 """);
     }
 
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        System.out.println(serverMessage.getServerMessageType());
+    }
 }

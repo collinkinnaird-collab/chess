@@ -20,14 +20,11 @@ public class UserGameCommand {
 
     private final String userName;
 
-    private final ChessMove myMove;
-
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String userName, ChessMove move) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String userName) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
         this.userName = userName;
-        this.myMove = move;
     }
 
     public enum CommandType {
@@ -50,8 +47,6 @@ public class UserGameCommand {
     }
 
     public String getUserName() {return userName; }
-
-    public ChessMove getMyMove() {return myMove; }
 
     @Override
     public boolean equals(Object o) {

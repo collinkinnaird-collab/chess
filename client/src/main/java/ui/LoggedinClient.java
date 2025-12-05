@@ -2,6 +2,7 @@ package ui;
 
 import WebSocket.NotificationHandler;
 import WebSocket.WebSocketFacade;
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.ListOfGames;
@@ -75,6 +76,12 @@ public class LoggedinClient implements NotificationHandler {
             UpdateGameData newGame = new UpdateGameData(playerColor, id);
 
             server.playGame(newGame, userAuth);
+            for (GameData games: server.listGames(userAuth).games()){
+                if(games.blackUsername().equals(userAuth.username()) || games.whiteUsername().equals(userAuth.username())){
+                    ws.EnterGame(userAuth.username() , userAuth.authToken(), games);
+                    break;
+                }
+            }
 
             DrawBoard chessBoard = new DrawBoard();
             chessBoard.freshBoard(playerColor);

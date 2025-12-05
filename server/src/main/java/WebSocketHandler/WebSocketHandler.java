@@ -3,6 +3,7 @@ package WebSocketHandler;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
+import model.GameData;
 import org.eclipse.jetty.server.Authentication;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
@@ -28,7 +29,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName(), command.getMyMove());
+                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case LEAVE -> LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case RESIGN -> Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
             }
@@ -44,13 +45,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     public void JoinGame(int gameId, String auth, Session session, String username) throws IOException {
         connections.add(gameId, session);
+
         var message = String.format( "%s has joined the Game!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(session, ServerMessage, message, gameId);
 
     }
 
-    public void PlayTurn(int gameId, String auth, Session session, String username, ChessMove move) throws IOException {
+    public void PlayTurn(int gameId, String auth, Session session, String username) throws IOException {
         var message = String.format( "%s's turn!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(session, ServerMessage, message, gameId);

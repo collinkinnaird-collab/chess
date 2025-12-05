@@ -180,12 +180,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void LeaveGame(int gameId, String auth, Session session, String username) throws IOException {
-        connections.remove(gameId, session);
-        var message = String.format( "%s has left the Game!", username);
-        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, "", gameId);
+    public void LeaveGame(int gameId, String auth, Session session, String username) throws Exception {
+        GameData gameData = gameDao.getGame(gameId);
+        ChessGame game = gameData.game();
+        String name = authDao.getName(auth).username();
+        Notification notification = new Notification(String.format("%s has left!", name));
+        String json = new Gson().toJson(notification);
+        if(name.equals(gameData.blackUsername()))
+        {
+            GameData newGame = new GameData(gameId, gameData.whiteUsername(), null, gameData.gameName(), game);
+            gameDao.updateGame(newGame, game);
+        } else {
+            GameData newGame = new GameData(gameId, null, gameData.blackUsername(), gameData.gameName(), game);
+            gameDao.updateGame(newGame, game);
+        }
+        connections.broadcast(session, json, gameId);
 
+        session.close();
     }
 
     public void Resign(int gameId, String auth, Session session, String username, String ctx) throws Exception {

@@ -193,12 +193,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
        try {
            GameData gameData = gameDao.getGame(gameId);
            ChessGame game = gameData.game();
-           ResignCommand resign = new Gson().fromJson(ctx, ResignCommand.class);
            String name = authDao.getName(auth).username();
            if(!name.equals(gameData.whiteUsername()) && !name.equals(gameData.blackUsername())){
                ErrorMessage error = new ErrorMessage("Observers cannot resign!");
                String json = new Gson().toJson(error);
                MessageTime(session, json);
+               return;
+           }
+           if(game.getGameOver()){
+               ErrorMessage error = new ErrorMessage("Already resigned!");
+               String json = new Gson().toJson(error);
+               MessageTime(session, json);
+               return;
            }
            Notification notification = new Notification(String.format("%s has resigned!", name));
            String json = new Gson().toJson(notification);

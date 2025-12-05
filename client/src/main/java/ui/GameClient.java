@@ -1,27 +1,20 @@
 package ui;
 
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
 import model.ListOfGames;
-import model.UserData;
 import server.ServerFacade;
 
-import WebSocket.WebSocketFacade;
-import WebSocket.NotificationHandler;
+import websocket.WebSocketFacade;
+import websocket.NotificationHandler;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import java.awt.*;
-import java.net.http.WebSocket;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 public class GameClient implements NotificationHandler{
 
@@ -85,7 +78,7 @@ public class GameClient implements NotificationHandler{
             }
             if(found) {
                 MakeMoveCommand moves = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, userAuth.authToken(), verifGame.gameID(), userAuth.username(), move,verifGame);
-                ws.MakeMove(moves);
+                ws.makeMove(moves);
                 return "Success";
             }
         }

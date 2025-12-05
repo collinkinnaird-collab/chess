@@ -1,4 +1,4 @@
-package WebSocketHandler;
+package websockethandler;
 
 import chess.ChessGame;
 import chess.ChessMove;
@@ -6,20 +6,14 @@ import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.MySqlGameDAO;
 import io.javalin.websocket.*;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
-import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
-import websocket.commands.ResignCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
-import websocket.messages.ServerMessage;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
@@ -47,17 +41,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
                 MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
-                MakeMove(moveCommand.getGameID(), moveCommand.getAuthToken(), ctx.session, moveCommand.getUserName(), moveCommand.getMove());
+                makeMove(moveCommand.getGameID(), moveCommand.getAuthToken(), ctx.session, moveCommand.getUserName(), moveCommand.getMove());
             }
             else {
                 switch (command.getCommandType()) {
                     case CONNECT ->
-                            JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                            joinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                     //case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                     case LEAVE ->
-                            LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                            leaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                     case RESIGN ->
-                            Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName(), ctx.message());
+                            resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName(), ctx.message());
                 }
             }
         } catch (IOException ex) {
@@ -65,7 +59,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (Exception e) {
             ErrorMessage throwError = new ErrorMessage("Invalid Auth!");
             String json = new Gson().toJson(throwError);
-            MessageTime(ctx.session, json);
+            messageTime(ctx.session, json);
             return;
         }
     }
@@ -75,14 +69,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    public void JoinGame(int gameId, String auth, Session session, String username) throws Exception {
+    public void joinGame(int gameId, String auth, Session session, String username) throws Exception {
         try {
             connections.add(gameId, session);
             ChessGame game = gameDao.getGame(gameId).game();
             LoadGame myMessage = new LoadGame(game);
             String json = new Gson().toJson(myMessage);
             var message = String.format("%s has joined the Game!", authDao.getName(auth));
-            MessageTime(session, json);
+            messageTime(session, json);
             Notification notification = new Notification(message);
             String otherJson = new Gson().toJson(notification);
             connections.broadcast(session, otherJson, gameId);
@@ -90,13 +84,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var message = String.format("player cannot connect with wrong id");
             ErrorMessage error = new ErrorMessage(message);
             String json = new Gson().toJson(error);
-            MessageTime(session, json);
+            messageTime(session, json);
 
         }
 
     }
 
-    public void MakeMove(int gameId, String auth, Session session, String username, ChessMove move) throws Exception {
+    public void makeMove(int gameId, String auth, Session session, String username, ChessMove move) throws Exception {
         try{
         GameData gameData = gameDao.getGame(gameId);
         ChessGame game = gameData.game();
@@ -121,13 +115,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         if(game.getGameOver()){
             ErrorMessage throwError = new ErrorMessage("Can't make move, game's over!");
             String json = new Gson().toJson(throwError);
-            MessageTime(session, json);
+            messageTime(session, json);
             return;
         }
         if(userColor == null){
             ErrorMessage throwError = new ErrorMessage("Can't make move when you're observing!");
             String json = new Gson().toJson(throwError);
-            MessageTime(session, json);
+            messageTime(session, json);
             return;
         }
 
@@ -167,20 +161,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             } else {
                 ErrorMessage error = new ErrorMessage("It is not your turn");
                 String json = new Gson().toJson(error);
-                MessageTime(session, json);
+                messageTime(session, json);
             }
 
         } catch (InvalidMoveException e) {
             ErrorMessage error = new ErrorMessage("That's an invalid move!");
             String json = new Gson().toJson(error);
-            MessageTime(session, json);
+            messageTime(session, json);
             return;
         }
 
 
     }
 
-    public void LeaveGame(int gameId, String auth, Session session, String username) throws Exception {
+    public void leaveGame(int gameId, String auth, Session session, String username) throws Exception {
         GameData gameData = gameDao.getGame(gameId);
         ChessGame game = gameData.game();
         String name = authDao.getName(auth).username();
@@ -199,7 +193,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         session.close();
     }
 
-    public void Resign(int gameId, String auth, Session session, String username, String ctx) throws Exception {
+    public void resign(int gameId, String auth, Session session, String username, String ctx) throws Exception {
 
        try {
            GameData gameData = gameDao.getGame(gameId);
@@ -208,25 +202,25 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
            if(!name.equals(gameData.whiteUsername()) && !name.equals(gameData.blackUsername())){
                ErrorMessage error = new ErrorMessage("Observers cannot resign!");
                String json = new Gson().toJson(error);
-               MessageTime(session, json);
+               messageTime(session, json);
                return;
            }
            if(game.getGameOver()){
                ErrorMessage error = new ErrorMessage("Already resigned!");
                String json = new Gson().toJson(error);
-               MessageTime(session, json);
+               messageTime(session, json);
                return;
            }
            Notification notification = new Notification(String.format("%s has resigned!", name));
            String json = new Gson().toJson(notification);
-           MessageTime(session, json);
+           messageTime(session, json);
            game.gameOver(true);
            gameDao.updateGame(gameData, game);
            connections.broadcast(session, json, gameId);
        } catch(Exception e) {
            ErrorMessage error = new ErrorMessage("Observers cannot resign!");
            String json = new Gson().toJson(error);
-           MessageTime(session, json);
+           messageTime(session, json);
            return;
        }
 
@@ -237,7 +231,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void MessageTime(Session session, String json) throws IOException {
+    public void messageTime(Session session, String json) throws IOException {
         session.getRemote().sendString(json);
     }
 

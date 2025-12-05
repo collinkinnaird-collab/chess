@@ -1,7 +1,7 @@
 package server;
 
 
-import WebSocketHandler.WebSocketHandler;
+import websockethandler.WebSocketHandler;
 import dataaccess.*;
 import service.ClearService;
 import service.GameService;

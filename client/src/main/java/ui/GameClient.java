@@ -68,16 +68,18 @@ public class GameClient implements NotificationHandler{
                    piece = games.game().getBoard().getPiece(start);
                    verifGame = games;
                    move = new ChessMove(start, end, piece.getPieceType());
-                   for (ChessMove playableMoves: games.game().validMoves(start)){
-                       if (move == playableMoves){
-                           found = true;
-                       }
-                   }
+                   found = isFound(games, move, start );
+//                   for (ChessMove playableMoves: games.game().validMoves(start)){
+//                       if (move == playableMoves){
+//                           found = true;
+//                       }
+//                   }
 
                 }
             }
             if(found) {
-                MakeMoveCommand moves = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, userAuth.authToken(), verifGame.gameID(), userAuth.username(), move,verifGame);
+                MakeMoveCommand moves = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, userAuth.authToken()
+                                                            , verifGame.gameID(), userAuth.username(), move,verifGame);
                 ws.makeMove(moves);
                 return "Success";
             }
@@ -94,9 +96,13 @@ public class GameClient implements NotificationHandler{
         for (GameData games : personalGameList.games()) {
             if (games.blackUsername().equals(userAuth.username())) {
 
+                ws.loseGame(userAuth.username(), userAuth.authToken(), games);
                 return (games.blackUsername() + " gave up ... " + games.whiteUsername() + " wins! ");
 
+
             } else if (games.whiteUsername().equals(userAuth.username())) {
+
+                ws.loseGame(userAuth.username(), userAuth.authToken(), games);
                 return (games.whiteUsername() + " gave up ... " + games.blackUsername() + " wins! ");
             }
 
@@ -135,5 +141,14 @@ public class GameClient implements NotificationHandler{
     @Override
     public void notify(ServerMessage serverMessage) {
         System.out.println(serverMessage.getServerMessageType());
+    }
+
+    public boolean isFound(GameData games, ChessMove move, ChessPosition start ){
+        for (ChessMove playableMoves: games.game().validMoves(start)){
+            if (move == playableMoves){
+                return true;
+            }
+        }
+        return true;
     }
 }

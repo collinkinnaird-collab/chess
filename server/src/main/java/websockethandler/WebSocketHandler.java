@@ -142,7 +142,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     game.gameOver(true);
                 }
                 else if (game.isInCheck(otherColor)){
-                    notification = new Notification(String.format("%s moved from %s to %s, %s is now in check !", colorString, start, end, otherColor));
+                    notification = new Notification(String.format("%s moved from %s to %s, %s is now in check !"
+                                                                    , colorString, start, end, otherColor));
 
                 }
                 else {

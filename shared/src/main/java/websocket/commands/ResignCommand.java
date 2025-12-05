@@ -1,5 +1,7 @@
 package websocket.commands;
 
+import com.google.gson.Gson;
+
 public class ResignCommand extends UserGameCommand{
 
     int gameId;
@@ -13,4 +15,6 @@ public class ResignCommand extends UserGameCommand{
     public int getGameId(){
         return gameId;
     }
+
+    public String toString() {return new Gson().toJson(this);}
 }

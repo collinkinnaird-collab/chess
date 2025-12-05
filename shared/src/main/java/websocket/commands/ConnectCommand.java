@@ -2,6 +2,7 @@ package websocket.commands;
 
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 
 public class ConnectCommand extends UserGameCommand {
 
@@ -21,4 +22,6 @@ public class ConnectCommand extends UserGameCommand {
     public ChessGame.TeamColor getColor(){
         return color;
     }
+
+    public String toString() {return new Gson().toJson(this);}
 }

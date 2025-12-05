@@ -1,6 +1,7 @@
 package websocket.commands;
 
 import chess.ChessMove;
+import com.google.gson.Gson;
 import model.GameData;
 
 public class MakeMoveCommand extends UserGameCommand{
@@ -20,4 +21,6 @@ public class MakeMoveCommand extends UserGameCommand{
     public GameData getGame(){
         return game;
     }
+
+    public String toString() {return new Gson().toJson(this);}
 }

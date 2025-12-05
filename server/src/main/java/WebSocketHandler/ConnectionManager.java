@@ -24,7 +24,7 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcast(Session excludeSession, ServerMessage message, String printable, Integer gameId) throws IOException {
+    public void broadcast(Session excludeSession, ServerMessage message, int gameId) throws IOException {
 
         List<Session> session = connections.get(gameId);
         String msg = message.toString();

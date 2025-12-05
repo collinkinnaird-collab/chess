@@ -55,7 +55,7 @@ public class Server {
 
     public Server() {
 
-        this.webSocketHandler = new WebSocketHandler();
+        this.webSocketHandler = new WebSocketHandler(dataAccessGame);
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))

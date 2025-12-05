@@ -14,6 +14,7 @@ import model.GameData;
 import org.eclipse.jetty.server.Authentication;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGame;
@@ -56,7 +57,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     case LEAVE ->
                             LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                     case RESIGN ->
-                            Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                            Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName(), ctx.message());
                 }
             }
         } catch (IOException ex) {
@@ -143,7 +144,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     game.gameOver(true);
                 }
                 else if (game.isInStalemate(otherColor)){
-                    notification = new Notification(String.format("Stalemate!"));
+                    notification = new Notification("Stalemate!");
                     game.gameOver(true);
                 }
                 else if (game.isInCheck(otherColor)){
@@ -187,10 +188,35 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void Resign(int gameId, String auth, Session session, String username) throws IOException {
-        var message = String.format( "%s has given up!", username);
-        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, "ServerMessage", gameId);
+    public void Resign(int gameId, String auth, Session session, String username, String ctx) throws Exception {
+
+       try {
+           GameData gameData = gameDao.getGame(gameId);
+           ChessGame game = gameData.game();
+           ResignCommand resign = new Gson().fromJson(ctx, ResignCommand.class);
+           String name = authDao.getName(auth).username();
+           if(!name.equals(gameData.whiteUsername()) && !name.equals(gameData.blackUsername())){
+               ErrorMessage error = new ErrorMessage("Observers cannot resign!");
+               String json = new Gson().toJson(error);
+               MessageTime(session, json);
+           }
+           Notification notification = new Notification(String.format("%s has resigned!", name));
+           String json = new Gson().toJson(notification);
+           MessageTime(session, json);
+           game.gameOver(true);
+           gameDao.updateGame(gameData, game);
+           connections.broadcast(session, json, gameId);
+       } catch(Exception e) {
+           ErrorMessage error = new ErrorMessage("Observers cannot resign!");
+           String json = new Gson().toJson(error);
+           MessageTime(session, json);
+           return;
+       }
+
+
+
+
+
 
     }
 

@@ -34,10 +34,10 @@ public class GameClient implements NotificationHandler{
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (command){
                 case "1" -> "quit";
-                case "2" -> RedrawChessBoard();
-                case "3" -> MakeMove(userAuth, params);
-                case "4" -> Resign(userAuth);
-                case "5" -> HighlightLegalMoves(userAuth, params);
+                case "2" -> redrawChessBoard();
+                case "3" -> makeMove(userAuth, params);
+                case "4" -> resign(userAuth);
+                case "5" -> highlightLegalMoves(userAuth, params);
                 case "6" -> help();
                 default -> help();
             };
@@ -46,12 +46,12 @@ public class GameClient implements NotificationHandler{
         }
     }
 
-    public String RedrawChessBoard(){
+    public String redrawChessBoard(){
 
         return "Success";
     }
 
-    public String MakeMove(AuthData userAuth, String ... params) throws Exception {
+    public String makeMove(AuthData userAuth, String ... params) throws Exception {
         if(params.length > 1){
 
             ListOfGames personalGameList = server.listGames(userAuth);
@@ -69,11 +69,6 @@ public class GameClient implements NotificationHandler{
                    verifGame = games;
                    move = new ChessMove(start, end, piece.getPieceType());
                    found = isFound(games, move, start );
-//                   for (ChessMove playableMoves: games.game().validMoves(start)){
-//                       if (move == playableMoves){
-//                           found = true;
-//                       }
-//                   }
 
                 }
             }
@@ -89,7 +84,7 @@ public class GameClient implements NotificationHandler{
 
     }
 
-    public String Resign (AuthData userAuth) throws Exception {
+    public String resign (AuthData userAuth) throws Exception {
 
         ListOfGames personalGameList = server.listGames(userAuth);
 
@@ -110,7 +105,7 @@ public class GameClient implements NotificationHandler{
         return null;
     }
 
-    public String HighlightLegalMoves(AuthData userAuth, String ... params) throws Exception {
+    public String highlightLegalMoves(AuthData userAuth, String ... params) throws Exception {
         if(params.length > 1){
             ListOfGames personalGameList = server.listGames(userAuth);
             ChessPosition start = new ChessPosition(Integer.parseInt(params[0]), Integer.parseInt(params[1]));

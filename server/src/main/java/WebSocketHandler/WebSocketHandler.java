@@ -41,7 +41,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     @Override
-    public void handleMessage(WsMessageContext ctx) {
+    public void handleMessage(WsMessageContext ctx) throws IOException {
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
@@ -62,7 +62,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ErrorMessage throwError = new ErrorMessage("Invalid Auth!");
+            String json = new Gson().toJson(throwError);
+            MessageTime(ctx.session, json);
+            return;
         }
     }
 
@@ -99,6 +102,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessGame.TeamColor userColor;
         ChessGame.TeamColor otherColor;
         Notification notification;
+        String name = authDao.getName(auth).username();
+
 
             if(authDao.getName(auth).username().equals(gameData.whiteUsername())) {
                 userColor = ChessGame.TeamColor.WHITE;
@@ -168,7 +173,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ErrorMessage error = new ErrorMessage("That's an invalid move!");
             String json = new Gson().toJson(error);
             MessageTime(session, json);
-            throw new RuntimeException(e);
+            return;
         }
 
 

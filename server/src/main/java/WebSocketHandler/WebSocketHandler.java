@@ -48,11 +48,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
                 MakeMove(moveCommand.getGameID(), moveCommand.getAuthToken(), ctx.session, moveCommand.getUserName(), moveCommand.getMove());
             }
-            switch (command.getCommandType()) {
-                case CONNECT -> JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                //case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case LEAVE -> LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case RESIGN -> Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+            else {
+                switch (command.getCommandType()) {
+                    case CONNECT ->
+                            JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                    //case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                    case LEAVE ->
+                            LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                    case RESIGN ->
+                            Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -88,33 +93,84 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void MakeMove(int gameId, String auth, Session session, String username, ChessMove move) throws Exception {
-
+        try{
         GameData gameData = gameDao.getGame(gameId);
         ChessGame game = gameData.game();
+        ChessGame.TeamColor userColor;
+        ChessGame.TeamColor otherColor;
+        Notification notification;
 
-        try{
-            game.makeMove(move);
+            if(authDao.getName(auth).username().equals(gameData.whiteUsername())) {
+                userColor = ChessGame.TeamColor.WHITE;
+                otherColor = ChessGame.TeamColor.BLACK;
+            }
+            else if(authDao.getName(auth).username().equals(gameData.blackUsername())) {
+                userColor = ChessGame.TeamColor.BLACK;
+                otherColor = ChessGame.TeamColor.WHITE;
+            } else {
+                userColor = null;
+                otherColor = null;
+            }
+
+        if(game.getGameOver()){
+            ErrorMessage throwError = new ErrorMessage("Can't make move, game's over!");
+            String json = new Gson().toJson(throwError);
+            MessageTime(session, json);
+            return;
+        }
+        if(userColor == null){
+            ErrorMessage throwError = new ErrorMessage("Can't make move when you're observing!");
+            String json = new Gson().toJson(throwError);
+            MessageTime(session, json);
+            return;
+        }
+
+            String colorString = authDao.getName(auth).username().equals(gameData.whiteUsername()) ? "white" : "black";
+            String start = toChessNotation(move.getStartPosition());
+            String end = toChessNotation(move.getEndPosition());
+
+            if(game.getTeamTurn().equals(userColor)) {
+                game.makeMove(move);
+
+
+                if(game.isInCheckmate(otherColor)){
+                    notification = new Notification(String.format("Checkmate! %s wins", authDao.getName(auth)));
+                    game.gameOver(true);
+                }
+                else if (game.isInStalemate(otherColor)){
+                    notification = new Notification(String.format("Stalemate!"));
+                    game.gameOver(true);
+                }
+                else if (game.isInCheck(otherColor)){
+                    notification = new Notification(String.format("%s moved from %s to %s, %s is now in check !", colorString, start, end, otherColor));
+
+                }
+                else {
+                    String message = String.format("%s moved from %s to %s", colorString, start, end);
+                    notification = new Notification(message);
+                }
+
+                gameDao.updateGame(gameData, game);
+
+                LoadGame newGame = new LoadGame(game);
+                String json = new Gson().toJson(newGame);
+                session.getRemote().sendString(json);
+                connections.broadcast(session, json, gameId);
+                String otherJson = new Gson().toJson(notification);
+                connections.broadcast(session, otherJson, gameId);
+            } else {
+                ErrorMessage error = new ErrorMessage("It is not your turn");
+                String json = new Gson().toJson(error);
+                MessageTime(session, json);
+            }
+
         } catch (InvalidMoveException e) {
+            ErrorMessage error = new ErrorMessage("That's an invalid move!");
+            String json = new Gson().toJson(error);
+            MessageTime(session, json);
             throw new RuntimeException(e);
         }
 
-
-
-        gameDao.updateGame(gameData, game);
-
-        LoadGame newGame = new LoadGame(game);
-        String json = new Gson().toJson(newGame);
-        session.getRemote().sendString(json);
-        connections.broadcast(session, json, gameId);
-
-        String colorString = authDao.getName(auth).equals(gameData.whiteUsername()) ? "white" : "black";
-        String start = toChessNotation(move.getStartPosition());
-        String end = toChessNotation(move.getEndPosition());
-        String message = String.format("%s moved from %s to %s", colorString, start, end);
-
-        Notification notification = new Notification(message);
-        String otherJson = new Gson().toJson(notification);
-        connections.broadcast(session, otherJson, gameId);
 
     }
 

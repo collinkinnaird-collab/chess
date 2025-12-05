@@ -14,6 +14,7 @@ public class ChessGame implements CheckMateCalculator{
     ChessBoard gameBoard;
     TeamColor teamTurn;
     boolean stalemate = false;
+    boolean gameOver;
 
     public ChessGame() {
 
@@ -315,6 +316,14 @@ public class ChessGame implements CheckMateCalculator{
      */
     public void setBoard(ChessBoard board) {
         gameBoard = board;
+    }
+
+    public void gameOver(boolean gameOver){
+        this.gameOver = gameOver;
+    }
+
+    public boolean getGameOver(){
+        return gameOver;
     }
 
     /**

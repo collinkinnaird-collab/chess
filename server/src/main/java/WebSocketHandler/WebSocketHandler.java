@@ -3,6 +3,7 @@ package WebSocketHandler;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.MySqlGameDAO;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.server.Authentication;
 import org.jetbrains.annotations.NotNull;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
@@ -23,9 +25,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private final ConnectionManager connections = new ConnectionManager();
     private final GameDAO gameDao;
+    private final AuthDAO authDao;
 
-    public WebSocketHandler(GameDAO gameDao) {
+    public WebSocketHandler(GameDAO gameDao, AuthDAO authDao) {
         this.gameDao = gameDao;
+        this.authDao = authDao;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -56,15 +60,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    public void JoinGame(int gameId, String auth, Session session, String username) throws IOException, DataAccessException {
-        connections.add(gameId, session);
-        ChessGame game = gameDao.getGame(gameId).game();
-        LoadGame myMessage = new LoadGame(game);
-        String json = new Gson().toJson(myMessage);
-        var message = String.format( "%s has joined the Game!", username);
+    public void JoinGame(int gameId, String auth, Session session, String username) throws Exception {
+        try {
+            connections.add(gameId, session);
+            ChessGame game = gameDao.getGame(gameId).game();
+            LoadGame myMessage = new LoadGame(game);
+            String json = new Gson().toJson(myMessage);
+            var message = String.format("%s has joined the Game!", authDao.getName(auth));
+            MessageTime(session, json);
+            Notification notification = new Notification(message);
+            connections.broadcast(session, notification, gameId);
+        } catch (Exception e) {
+            var message = String.format("player cannot connect with wrong id");
+            ErrorMessage error = new ErrorMessage(message);
+            String json = new Gson().toJson(error);
+            MessageTime(session, json);
 
-        Notification notification = new Notification(message + json);
-        connections.broadcast(session, notification, gameId);
+        }
 
     }
 
@@ -90,7 +102,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void Message(Session session, String json) throws IOException {
+    public void MessageTime(Session session, String json) throws IOException {
         session.getRemote().sendString(json);
     }
 

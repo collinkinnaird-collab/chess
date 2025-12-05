@@ -2,10 +2,10 @@ package websocket.messages;
 
 import com.google.gson.Gson;
 
-public class Error extends ServerMessage {
+public class ErrorMessage extends ServerMessage {
 
     String errorMessage;
-    public Error(String errorMessage) {
+    public ErrorMessage(String errorMessage) {
         super(ServerMessageType.ERROR);
         this.errorMessage = errorMessage;
     }

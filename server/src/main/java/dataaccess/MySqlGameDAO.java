@@ -82,12 +82,12 @@ public class MySqlGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException {
+    public void updateGame(GameData gameData, ChessGame game) throws DataAccessException {
         var statement = "DELETE FROM game WHERE gameId=?";
         MySqlDaoHelper.executeUpdate(statement, gameData.gameID());
 
         var statement2 = "INSERT INTO game (gameId, whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?, ?)";
-        String json = new Gson().toJson(gameData.game());
+        String json = new Gson().toJson(game);
         MySqlDaoHelper.executeUpdate(statement2, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),  gameData.gameName()
                                     , json);
 

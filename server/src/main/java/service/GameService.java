@@ -73,7 +73,7 @@ public class GameService {
 
         GameData updatedGame = new GameData(nameId, white, black, foundGame.gameName(), foundGame.game());
 
-        dataAccessGame.updateGame(updatedGame);
+        dataAccessGame.updateGame(updatedGame, foundGame.game());
 
 
 

@@ -13,6 +13,7 @@ import server.ServerFacade;
 import WebSocket.WebSocketFacade;
 import WebSocket.NotificationHandler;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.awt.*;
@@ -83,7 +84,8 @@ public class GameClient implements NotificationHandler{
                 }
             }
             if(found) {
-                ws.MakeMove(userAuth.username(), userAuth.authToken(), verifGame, move);
+                MakeMoveCommand moves = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, userAuth.authToken(), verifGame.gameID(), userAuth.username(), move,verifGame);
+                ws.MakeMove(moves);
                 return "Success";
             }
         }

@@ -24,14 +24,13 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcast(Session excludeSession, ServerMessage message, int gameId) throws IOException {
+    public void broadcast(Session excludeSession, String message, int gameId) throws IOException {
 
         List<Session> session = connections.get(gameId);
-        String msg = message.toString();
         for (Session c : session) {
             if (c.isOpen()) {
                 if (!c.equals(excludeSession)) {
-                    c.getRemote().sendString(msg);
+                    c.getRemote().sendString(message);
                 }
             }
         }

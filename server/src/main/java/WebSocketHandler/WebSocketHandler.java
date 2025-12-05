@@ -2,6 +2,8 @@ package WebSocketHandler;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -42,9 +44,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(WsMessageContext ctx) {
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+                MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
+                MakeMove(moveCommand.getGameID(), moveCommand.getAuthToken(), ctx.session, moveCommand.getUserName(), moveCommand.getMove());
+            }
             switch (command.getCommandType()) {
                 case CONNECT -> JoinGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
-                case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
+                //case MAKE_MOVE -> PlayTurn(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case LEAVE -> LeaveGame(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
                 case RESIGN -> Resign(command.getGameID(), command.getAuthToken(), ctx.session, command.getUserName());
             }
@@ -69,7 +75,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var message = String.format("%s has joined the Game!", authDao.getName(auth));
             MessageTime(session, json);
             Notification notification = new Notification(message);
-            connections.broadcast(session, notification, gameId);
+            String otherJson = new Gson().toJson(notification);
+            connections.broadcast(session, otherJson, gameId);
         } catch (Exception e) {
             var message = String.format("player cannot connect with wrong id");
             ErrorMessage error = new ErrorMessage(message);
@@ -80,10 +87,34 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    public void PlayTurn(int gameId, String auth, Session session, String username) throws IOException {
-        var message = String.format( "%s's turn!", username);
-        var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, gameId);
+    public void MakeMove(int gameId, String auth, Session session, String username, ChessMove move) throws Exception {
+
+        GameData gameData = gameDao.getGame(gameId);
+        ChessGame game = gameData.game();
+
+        try{
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        gameDao.updateGame(gameData, game);
+
+        LoadGame newGame = new LoadGame(game);
+        String json = new Gson().toJson(newGame);
+        session.getRemote().sendString(json);
+        connections.broadcast(session, json, gameId);
+
+        String colorString = authDao.getName(auth).equals(gameData.whiteUsername()) ? "white" : "black";
+        String start = toChessNotation(move.getStartPosition());
+        String end = toChessNotation(move.getEndPosition());
+        String message = String.format("%s moved from %s to %s", colorString, start, end);
+
+        Notification notification = new Notification(message);
+        String otherJson = new Gson().toJson(notification);
+        connections.broadcast(session, otherJson, gameId);
 
     }
 
@@ -91,19 +122,26 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.remove(gameId, session);
         var message = String.format( "%s has left the Game!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, gameId);
+        connections.broadcast(session, "", gameId);
 
     }
 
     public void Resign(int gameId, String auth, Session session, String username) throws IOException {
         var message = String.format( "%s has given up!", username);
         var ServerMessage = new ServerMessage(websocket.messages.ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, ServerMessage, gameId);
+        connections.broadcast(session, "ServerMessage", gameId);
 
     }
 
     public void MessageTime(Session session, String json) throws IOException {
         session.getRemote().sendString(json);
     }
+
+    private String toChessNotation(ChessPosition pos) {
+        char file = (char) ('a' + pos.getColumn() - 1);
+        char rank = (char) ('0' + pos.getRow());
+        return "" + file + rank;
+    }
+
 
 }
